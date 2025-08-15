@@ -42,6 +42,16 @@ export const auth = betterAuth({
       maxAge: 30 * 60, // 30 minutes - increased from 5 minutes for better performance
     },
   },
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    },
+    github: {
+      clientId: process.env.GITHUB_ID || '',
+      clientSecret: process.env.GITHUB_SECRET || '',
+    },
+  },
   advanced: {
     defaultSignInRedirect: '/dashboard',
     defaultSignUpRedirect: '/dashboard',

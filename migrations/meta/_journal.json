@@ -15,6 +15,13 @@
       "when": 1755184099413,
       "tag": "0001_tired_shadow_king",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1755281590582,
+      "tag": "0002_wide_mach_iv",
+      "breakpoints": true
     }
   ]
 }
