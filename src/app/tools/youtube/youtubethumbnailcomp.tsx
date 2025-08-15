@@ -64,6 +64,7 @@ interface ThumbnailComponentProps {
   linearGradient: string
   backgroundImage: number
   subActiveTab: SubActiveTabs
+  solidColor: string
 }
 
 interface EditorSidebarProps {
@@ -90,6 +91,8 @@ interface EditorSidebarProps {
   setBackgroundImage: (value: number) => void
   subActiveTab: SubActiveTabs
   setSubActiveTab: (value: SubActiveTabs) => void
+  solidColor: string
+  setSolidColor: (value: string) => void
 }
 
 export function YoutubeThumbnail() {
@@ -104,6 +107,7 @@ export function YoutubeThumbnail() {
   const [linearGradient, setLinearGradient] = useState(initialLinearGradient)
   const [backgroundImage, setBackgroundImage] = useState(1)
   const [subActiveTab, setSubActiveTab] = useState<SubActiveTabs>('Gradient')
+  const [solidColor, setSolidColor] = useState(PlainColors[0])
   return (
     <div
       id="maindiv"
@@ -121,6 +125,7 @@ export function YoutubeThumbnail() {
         linearGradient={linearGradient}
         backgroundImage={backgroundImage}
         subActiveTab={subActiveTab}
+        solidColor={solidColor}
       />
       <EditorSidebar
         text="Made By John 🔥"
@@ -146,6 +151,8 @@ export function YoutubeThumbnail() {
         setBackgroundImage={setBackgroundImage}
         subActiveTab={subActiveTab}
         setSubActiveTab={setSubActiveTab}
+        solidColor={solidColor}
+        setSolidColor={setSolidColor}
       />
     </div>
   )
@@ -162,6 +169,7 @@ const ThumbnailComponent = ({
   linearGradient,
   backgroundImage,
   subActiveTab,
+  solidColor,
 }: ThumbnailComponentProps) => {
   const [showWatermark, setShowWatermark] = useState(true)
   const [watermarkStyle, setWatermarkStyle] = useState('dark')
@@ -216,7 +224,9 @@ const ThumbnailComponent = ({
           background:
             subActiveTab === 'Gradient'
               ? linearGradient
-              : `url(/test${backgroundImage}.webp)`,
+              : subActiveTab === 'Solid'
+                ? solidColor
+                : `url(/test${backgroundImage}.webp)`,
           position: 'relative',
           display: 'flex',
           alignItems: 'center',
@@ -408,6 +418,8 @@ const EditorSidebar = ({
   setBackgroundImage,
   subActiveTab,
   setSubActiveTab,
+  solidColor,
+  setSolidColor,
 }: EditorSidebarProps) => {
   const [ResetDialog, confirm] = useConfirm(
     'Reset',
@@ -473,6 +485,10 @@ const EditorSidebar = ({
   const handleImageChange = (num: number) => {
     setBackgroundImage(num)
     setSelectedImage(num)
+  }
+  const handleSolidColorChange = (color: string) => {
+    setSelectedSolidColor(color)
+    setSolidColor(color)
   }
   return (
     <div
@@ -1138,10 +1154,10 @@ const EditorSidebar = ({
                   )}
                   style={{ background: plainColor }}
                   key={plainColor}
-                  onClick={() => setSelectedSolidColor(plainColor)}
+                  onClick={() => handleSolidColorChange(plainColor)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
-                      setSelectedGradient(plainColor)
+                      handleSolidColorChange(plainColor)
                     }
                   }}
                 />
