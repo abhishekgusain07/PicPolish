@@ -503,6 +503,9 @@ const EditorSidebar = ({
     PlainColors[0]
   )
   const [selectedImage, setSelectedImage] = useState<number>(1)
+  const [joystickActive, setJoystickActive] = useState(false)
+  const [baseTransform, setBaseTransform] = useState(initialTransform)
+  const [eventCounter, setEventCounter] = useState(0)
 
   // extract rgb values from gradient
   function extractRGBValues(gradient: string) {
@@ -557,26 +560,78 @@ const EditorSidebar = ({
     setSolidColor(color)
   }
 
+  const handleJoystickStart = () => {
+    console.log(
+      '🎮 JOYSTICK STARTED - capturing base transform:',
+      imageTransform
+    )
+    setJoystickActive(true)
+    setBaseTransform(imageTransform)
+    setEventCounter(0)
+  }
+
   const handleJoystickMove = (event: {
     x: number | null
     y: number | null
   }) => {
-    console.log('Joystick event:', event) // Debug logging
+    setEventCounter((prev) => prev + 1)
+    console.log('=== JOYSTICK DEBUG #' + (eventCounter + 1) + ' ===')
+    console.log('Raw event:', event)
+    console.log('X value:', event?.x, 'type:', typeof event?.x)
+    console.log('Y value:', event?.y, 'type:', typeof event?.y)
+    console.log('Event timestamp:', Date.now())
 
-    // Convert joystick coordinates (-100 to 100) to rotation degrees (-30 to 30)
-    const rotateY = (event?.x ?? 0) * 0.3 // Scale down the rotation
-    const rotateX = -((event?.y ?? 0) * 0.3) // Negative for intuitive up/down movement
+    // Check if values are in expected range
+    const xVal = event?.x ?? 0
+    const yVal = event?.y ?? 0
+    console.log('Processed values - X:', xVal, 'Y:', yVal)
+
+    // Dead zone handling - ignore very small movements (adjust based on coordinate range)
+    const deadZone = Math.abs(xVal) > 50 || Math.abs(yVal) > 50 ? 5 : 0.05 // Adaptive dead zone
+    if (Math.abs(xVal) < deadZone && Math.abs(yVal) < deadZone) {
+      console.log('Movement within dead zone, ignoring')
+      return
+    }
+
+    // Adaptive scaling based on coordinate range detection
+    let scaleFactorX = 0.3
+    let scaleFactorY = 0.3
+
+    // If coordinates are small (likely -1 to 1 range), scale up
+    if (Math.abs(xVal) <= 1 && Math.abs(yVal) <= 1) {
+      console.log('Detected small coordinate range (-1 to 1), scaling up')
+      scaleFactorX = 30 // Scale up significantly
+      scaleFactorY = 30
+    } else if (Math.abs(xVal) <= 10 && Math.abs(yVal) <= 10) {
+      console.log(
+        'Detected medium coordinate range (-10 to 10), scaling medium'
+      )
+      scaleFactorX = 3
+      scaleFactorY = 3
+    }
+
+    console.log('Using scale factors - X:', scaleFactorX, 'Y:', scaleFactorY)
+
+    // Convert joystick coordinates to rotation degrees
+    const rotateY = xVal * scaleFactorX // Scale rotation
+    const rotateX = -yVal * scaleFactorY // Negative for intuitive up/down movement
+
+    console.log('Calculated rotations - rotateY:', rotateY, 'rotateX:', rotateX)
 
     // Create the transform string with perspective
     const transform = `perspective(500px) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`
-    console.log('Setting transform:', transform) // Debug logging
+    console.log('Final transform string:', transform)
+    console.log('Current imageTransform before update:', imageTransform)
+    console.log('Base transform:', baseTransform)
 
     setImageTransform(transform)
+    console.log('=== END JOYSTICK DEBUG ===\n')
   }
 
   const handleJoystickStop = () => {
-    // Optionally reset to center or keep current position
-    // For now, we'll keep the current position
+    console.log('🛑 JOYSTICK STOPPED - Total events received:', eventCounter)
+    setJoystickActive(false)
+    // Keep the current position when joystick is released
   }
 
   const testTransform = () => {
@@ -1023,6 +1078,7 @@ const EditorSidebar = ({
                         stickSize={25}
                         baseColor="rgba(148, 163, 184, 0.3)"
                         stickColor="rgba(71, 85, 105, 0.8)"
+                        start={handleJoystickStart}
                         move={handleJoystickMove}
                         stop={handleJoystickStop}
                         throttle={50}
