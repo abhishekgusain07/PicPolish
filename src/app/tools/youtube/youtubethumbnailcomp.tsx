@@ -12,6 +12,7 @@ import { Position } from '@/constants/constant'
 import { toast } from 'sonner'
 import { useConfirm } from '../../../../hooks/use-confirm'
 import { ArchiveRestoreIcon } from 'lucide-react'
+import { Joystick } from 'react-joystick-component'
 
 type ActiveTabs = 'Settings' | 'Edit' | 'Background'
 type SubActiveTabs = 'Gradient' | 'Image' | 'Solid'
@@ -555,6 +556,33 @@ const EditorSidebar = ({
     setSelectedSolidColor(color)
     setSolidColor(color)
   }
+
+  const handleJoystickMove = (event: {
+    x: number | null
+    y: number | null
+  }) => {
+    console.log('Joystick event:', event) // Debug logging
+
+    // Convert joystick coordinates (-100 to 100) to rotation degrees (-30 to 30)
+    const rotateY = (event?.x ?? 0) * 0.3 // Scale down the rotation
+    const rotateX = -((event?.y ?? 0) * 0.3) // Negative for intuitive up/down movement
+
+    // Create the transform string with perspective
+    const transform = `perspective(500px) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`
+    console.log('Setting transform:', transform) // Debug logging
+
+    setImageTransform(transform)
+  }
+
+  const handleJoystickStop = () => {
+    // Optionally reset to center or keep current position
+    // For now, we'll keep the current position
+  }
+
+  const testTransform = () => {
+    console.log('Testing manual transform')
+    setImageTransform('perspective(500px) rotateY(15deg) rotateX(10deg)')
+  }
   return (
     <div
       id="rightAside"
@@ -989,14 +1017,22 @@ const EditorSidebar = ({
                     <div className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3 text-center">
                       Tilt Control
                     </div>
-                    <div
-                      className="w-12 h-12 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-600 dark:to-slate-700 rounded-full flex items-center justify-center shadow-inner border border-slate-300/50 dark:border-slate-500/50"
-                      data-testid="joystick-base"
-                    >
-                      <button
-                        className="w-8 h-8 bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-300 dark:to-slate-100 rounded-full cursor-move transition-transform hover:scale-110 active:scale-95 shadow-lg"
-                        type="button"
+                    <div className="flex flex-col items-center gap-2">
+                      <Joystick
+                        size={60}
+                        stickSize={25}
+                        baseColor="rgba(148, 163, 184, 0.3)"
+                        stickColor="rgba(71, 85, 105, 0.8)"
+                        move={handleJoystickMove}
+                        stop={handleJoystickStop}
+                        throttle={50}
                       />
+                      <button
+                        onClick={testTransform}
+                        className="text-xs px-2 py-1 bg-blue-500 text-white rounded"
+                      >
+                        Test Transform
+                      </button>
                     </div>
                   </div>
                 </div>
