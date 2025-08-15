@@ -31,7 +31,9 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <TRPCProvider initialSession={initialSession}>{children}</TRPCProvider>
+        <TRPCProvider initialSession={initialSession}>
+          <div className="h-screen scrollbar-hide">{children}</div>
+        </TRPCProvider>
       </body>
     </html>
   )
