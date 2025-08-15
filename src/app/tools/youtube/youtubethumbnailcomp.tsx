@@ -108,52 +108,114 @@ export function YoutubeThumbnail() {
   const [backgroundImage, setBackgroundImage] = useState(1)
   const [subActiveTab, setSubActiveTab] = useState<SubActiveTabs>('Gradient')
   const [solidColor, setSolidColor] = useState(PlainColors[0])
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   return (
     <div
       id="maindiv"
-      className="flex flex-col lg:flex-row justify-between overflow-auto bg-[#f5f5f5] dark:bg-[#141414]"
-      style={{ minHeight: 'calc(-56px + 100vh)' }}
+      className="h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 lg:p-6 overflow-hidden"
     >
-      <ThumbnailComponent
-        paddingValue={paddingValue}
-        imageScale={imageScale}
-        imageBorder={imageBorder}
-        imageShadow={imageShadow}
-        imageTransform={imageTransform}
-        imagePosition={imagePosition}
-        filters={filters}
-        linearGradient={linearGradient}
-        backgroundImage={backgroundImage}
-        subActiveTab={subActiveTab}
-        solidColor={solidColor}
-      />
-      <EditorSidebar
-        text="Made By John 🔥"
-        paddingValue={paddingValue}
-        setPaddingValue={setPaddingValue}
-        imageScale={imageScale}
-        setImageScale={setImageScale}
-        imageBorder={imageBorder}
-        setImageBorder={setImageBorder}
-        imageShadow={imageShadow}
-        setImageShadow={setImageShadow}
-        imageTransform={imageTransform}
-        setImageTransform={setImageTransform}
-        imagePosition={imagePosition}
-        setImagePosition={setImagePosition}
-        filters={filters as Filters}
-        setFilters={setFilters}
-        fileName={fileName}
-        setFileName={setFileName}
-        linearGradient={linearGradient}
-        setLinearGradient={setLinearGradient}
-        backgroundImage={backgroundImage}
-        setBackgroundImage={setBackgroundImage}
-        subActiveTab={subActiveTab}
-        setSubActiveTab={setSubActiveTab}
-        solidColor={solidColor}
-        setSolidColor={setSolidColor}
-      />
+      <div className="flex flex-col xl:flex-row gap-4 lg:gap-6 max-w-7xl mx-auto h-full">
+        {/* Preview Card */}
+        <div className="flex-1 xl:w-[70%] order-2 xl:order-1 h-full">
+          <Card className="h-full backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-slate-200/50 dark:border-slate-700/50 shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50">
+            <CardContent className="p-0 h-full">
+              <ThumbnailComponent
+                paddingValue={paddingValue}
+                imageScale={imageScale}
+                imageBorder={imageBorder}
+                imageShadow={imageShadow}
+                imageTransform={imageTransform}
+                imagePosition={imagePosition}
+                filters={filters}
+                linearGradient={linearGradient}
+                backgroundImage={backgroundImage}
+                subActiveTab={subActiveTab}
+                solidColor={solidColor}
+              />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Editor Card */}
+        <div
+          className={cn(
+            'transition-all duration-300 ease-in-out order-1 xl:order-2 h-full',
+            sidebarCollapsed ? 'w-16' : 'w-full xl:w-[30%] xl:max-w-[400px]'
+          )}
+        >
+          <Card className="h-full backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-slate-200/50 dark:border-slate-700/50 shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50">
+            <CardContent className="p-0 h-full relative">
+              {/* Collapse/Expand Toggle */}
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="absolute -left-3 top-6 z-10 w-6 h-6 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
+              >
+                <svg
+                  className={cn(
+                    'w-3 h-3 text-slate-600 dark:text-slate-400 transition-transform duration-200',
+                    sidebarCollapsed ? 'rotate-180' : ''
+                  )}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+              {!sidebarCollapsed && (
+                <EditorSidebar
+                  text="Made By John 🔥"
+                  paddingValue={paddingValue}
+                  setPaddingValue={setPaddingValue}
+                  imageScale={imageScale}
+                  setImageScale={setImageScale}
+                  imageBorder={imageBorder}
+                  setImageBorder={setImageBorder}
+                  imageShadow={imageShadow}
+                  setImageShadow={setImageShadow}
+                  imageTransform={imageTransform}
+                  setImageTransform={setImageTransform}
+                  imagePosition={imagePosition}
+                  setImagePosition={setImagePosition}
+                  filters={filters as Filters}
+                  setFilters={setFilters}
+                  fileName={fileName}
+                  setFileName={setFileName}
+                  linearGradient={linearGradient}
+                  setLinearGradient={setLinearGradient}
+                  backgroundImage={backgroundImage}
+                  setBackgroundImage={setBackgroundImage}
+                  subActiveTab={subActiveTab}
+                  setSubActiveTab={setSubActiveTab}
+                  solidColor={solidColor}
+                  setSolidColor={setSolidColor}
+                />
+              )}
+              {sidebarCollapsed && (
+                <div className="p-4 flex flex-col items-center gap-4">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                    <svg
+                      className="w-4 h-4 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM15 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4z" />
+                    </svg>
+                  </div>
+                  <div className="text-xs text-center text-slate-600 dark:text-slate-400 rotate-90 whitespace-nowrap">
+                    Editor
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   )
 }
@@ -210,10 +272,10 @@ const ThumbnailComponent = ({
   }
   // const paddingOuter = Position2[imagePosition as keyof typeof Position2](paddingValue)
   return (
-    <div className="flex flex-col items-center justify-center py-8 w-full flex-1">
+    <div className="flex flex-col items-center justify-center p-6 w-full h-full min-h-[600px]">
       <div
         id="ss"
-        className="shadow-lg max-w-[90%] sm:max-w-[80%] md:max-w-[70%] lg:max-w-[60%]"
+        className="rounded-2xl shadow-2xl max-w-[95%] sm:max-w-[85%] md:max-w-[75%] lg:max-w-[65%] transition-all duration-300"
         style={{
           padding: (() => {
             const value = paddingValue
@@ -384,11 +446,14 @@ const ThumbnailComponent = ({
           />
         </div>
       </div>
-      <div className="flex flex-row justify-between text-end items-end cursor-pointer hover:scale-105 transition-all duration-100 group-hover/reset">
-        <ArchiveRestoreIcon
+      <div className="flex justify-center mt-4">
+        <button
           onClick={ResetState}
-          className="size-4 text-gray-500 group-hover/reset:text-gray-900"
-        />
+          className="group flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100/80 dark:bg-slate-700/80 hover:bg-slate-200/80 dark:hover:bg-slate-600/80 transition-all duration-200 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-slate-100"
+        >
+          <ArchiveRestoreIcon className="size-4 transition-transform group-hover:rotate-180 duration-300" />
+          Reset
+        </button>
       </div>
     </div>
   )
@@ -493,422 +558,462 @@ const EditorSidebar = ({
   return (
     <div
       id="rightAside"
-      className="w-full justify-center items-center md:justify-normal sm:max-w-[400px] md:max-w-[400px] bg-white dark:bg-[#1a1a1a] p-2 relative top-0 right-0 z-20 pb-12 scrollbar-none overflow-auto md:h-[calc(100vh-56px)]"
+      className="w-full h-full p-4 overflow-auto scrollbar-none"
     >
       <ResetDialog />
-      <div className="w-full flex flex-row items-center justify-between rounded-t-xl p-2 text-xs font-medium border bg-gray-50 dark:bg-[#0f0f0f] dark:border-gray-950">
-        <p
+      <div className="w-full flex flex-row items-center justify-between rounded-2xl p-3 text-sm font-semibold bg-slate-50/80 dark:bg-slate-700/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-600/50 mb-4">
+        <button
           className={cn(
-            'px-4 text-center py-2 rounded-lg cursor-pointer dark:bg-[#1a1a1a] font-semibold hover:bg-gray-200 dark:hover:bg-[#121212] mx-1',
-            activeTabs === 'Settings' && 'bg-white px-4 shadow-md'
+            'flex items-center gap-2 px-4 py-2.5 rounded-full transition-all duration-200 font-medium text-sm',
+            activeTabs === 'Settings'
+              ? 'bg-blue-500 text-white shadow-lg shadow-blue-200/50 dark:shadow-blue-900/50'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-600/50 hover:text-slate-800 dark:hover:text-slate-200'
           )}
           onClick={() => setActiveTabs('Settings')}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              setActiveTabs('Settings')
-            }
-          }}
         >
           <svg
+            className="size-4"
             stroke="currentColor"
             fill="currentColor"
             strokeWidth="0"
             viewBox="0 0 24 24"
-            height="18"
-            width="18"
             xmlns="http://www.w3.org/2000/svg"
-            aria-labelledby="settingsIconTitle"
           >
-            <title id="settingsIconTitle">Settings</title>
             <path fill="none" d="M0 0h24v24H0V0z" />
             <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
           </svg>
-        </p>
-        <p
+          Settings
+        </button>
+        <button
           className={cn(
-            'w-full text-center py-2 rounded-lg cursor-pointer font-semibold hover:bg-gray-200 dark:hover:bg-[#121212] mx-1',
-            activeTabs === 'Edit' && 'bg-white px-4 shadow-md'
+            'px-4 py-2.5 rounded-full transition-all duration-200 font-medium text-sm',
+            activeTabs === 'Edit'
+              ? 'bg-blue-500 text-white shadow-lg shadow-blue-200/50 dark:shadow-blue-900/50'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-600/50 hover:text-slate-800 dark:hover:text-slate-200'
           )}
           onClick={() => setActiveTabs('Edit')}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              setActiveTabs('Edit')
-            }
-          }}
         >
           Edit
-        </p>
-        <p
+        </button>
+        <button
           className={cn(
-            'w-full text-center py-2 rounded-lg cursor-pointer font-semibold hover:bg-gray-200 dark:hover:bg-[#121212] mx-1',
-            activeTabs === 'Background' && 'bg-white px-4 shadow-md'
+            'px-4 py-2.5 rounded-full transition-all duration-200 font-medium text-sm',
+            activeTabs === 'Background'
+              ? 'bg-blue-500 text-white shadow-lg shadow-blue-200/50 dark:shadow-blue-900/50'
+              : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-600/50 hover:text-slate-800 dark:hover:text-slate-200'
           )}
           onClick={() => setActiveTabs('Background')}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              setActiveTabs('Background')
-            }
-          }}
         >
           Background
-        </p>
+        </button>
       </div>
       {activeTabs === 'Settings' && (
-        <div className="p-2">
-          <div className="flex items-center justify-between mt-2">
-            <h6 className="flex items-center text-sm">
-              Quality
-              <select className="outline-none bg-white dark:bg-[#0f0f0f] mx-2 px-2 border border-gray-600 rounded-lg text-black dark:text-white">
+        <div className="p-4 space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                Quality
+              </label>
+              <select className="w-full px-3 py-2 rounded-xl bg-slate-50/80 dark:bg-slate-700/50 border border-slate-200/50 dark:border-slate-600/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200">
                 <option value="1">1x</option>
                 <option value="2">2x</option>
                 <option value="4">4x</option>
                 <option value="6">6x</option>
                 <option value="8">8x</option>
               </select>
-            </h6>
-            <h6 className="flex items-center text-sm">
-              Format
-              <select className="outline-none bg-white dark:bg-[#0f0f0f] mx-2 px-2 border border-gray-600 rounded-lg text-black dark:text-white">
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                Format
+              </label>
+              <select className="w-full px-3 py-2 rounded-xl bg-slate-50/80 dark:bg-slate-700/50 border border-slate-200/50 dark:border-slate-600/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200">
                 <option value="png">PNG</option>
                 <option value="jpeg">JPEG</option>
                 <option value="svg">SVG</option>
                 <option value="webp">WEBP</option>
               </select>
-            </h6>
-          </div>
-          <div className="my-8">
-            <div className="flex items-center text-xs mb-2 mt-4 font-medium">
-              <label className="flex-shrink-0 w-20">Brightness:</label>
-              <input
-                name="brightness"
-                className="range accent-gray-600"
-                type="range"
-                min="0"
-                max="2"
-                step="0.1"
-                value={filters.brightness}
-                onChange={handleFilterChange}
-              />
-            </div>
-            <div className="flex items-center text-xs mb-2 mt-4 font-medium">
-              <label className="flex-shrink-0 w-20">Contrast:</label>
-              <input
-                name="contrast"
-                className="range accent-gray-600"
-                type="range"
-                min="0"
-                max="2"
-                step="0.1"
-                value={filters.contrast}
-                onChange={handleFilterChange}
-              />
-            </div>
-            <div className="flex items-center text-xs mb-2 mt-4 font-medium">
-              <label className="flex-shrink-0 w-20">Grayscale:</label>
-              <input
-                name="grayscale"
-                className="range accent-gray-600"
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={filters.grayscale}
-                onChange={handleFilterChange}
-              />
-            </div>
-            <div className="flex items-center text-xs mb-2 mt-4 font-medium">
-              <label className="flex-shrink-0 w-20">Blur:</label>
-              <input
-                name="blur"
-                className="range accent-gray-600"
-                type="range"
-                min="0"
-                max="10"
-                step="0.5"
-                value={filters.blur}
-                onChange={handleFilterChange}
-              />
-            </div>
-            <div className="flex items-center text-xs mb-2 mt-4 font-medium">
-              <label className="flex-shrink-0 w-20">Hue-rotate:</label>
-              <input
-                name="hueRotate"
-                className="range accent-gray-600"
-                type="range"
-                min="0"
-                max="360"
-                step="10"
-                value={filters.hueRotate}
-                onChange={handleFilterChange}
-              />
-            </div>
-            <div className="flex items-center text-xs mb-2 mt-4 font-medium">
-              <label className="flex-shrink-0 w-20">Invert:</label>
-              <input
-                name="invert"
-                className="range accent-gray-600"
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={filters.invert}
-                onChange={handleFilterChange}
-              />
-            </div>
-            <div className="flex items-center text-xs mb-2 mt-4 font-medium">
-              <label className="flex-shrink-0 w-20">Opacity:</label>
-              <input
-                name="opacity"
-                className="range accent-gray-600"
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={filters.opacity}
-                onChange={handleFilterChange}
-              />
-            </div>
-            <div className="flex items-center text-xs mb-2 mt-4 font-medium">
-              <label className="flex-shrink-0 w-20">Saturate:</label>
-              <input
-                name="saturate"
-                className="range accent-gray-600"
-                type="range"
-                min="0"
-                max="2"
-                step="0.1"
-                value={filters.saturate}
-                onChange={handleFilterChange}
-              />
-            </div>
-            <div className="flex items-center text-xs mb-2 mt-4 font-medium">
-              <label className="flex-shrink-0 w-20">Sepia:</label>
-              <input
-                name="sepia"
-                className="range accent-gray-600"
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={filters.sepia}
-                onChange={handleFilterChange}
-              />
             </div>
           </div>
-          <div className="flex items-center text-sm mb-4 mt-4">
-            <svg
-              stroke="currentColor"
-              fill="currentColor"
-              strokeWidth="0"
-              viewBox="0 0 384 512"
-              className="mr-1"
-              height="1em"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <title>File Name</title>
-              <path d="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48z" />
-            </svg>
-            <span className="mx-1">File Name</span>
-            <input
-              type="text"
-              className="outline-none border-b border-gray-400 bg-transparent text-black dark:text-white ml-1 text-xs"
-              value={fileName}
-              onChange={(e) => setFileName(e.target.value)}
-            />
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">
+              Filters
+            </h3>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-slate-600 dark:text-slate-400 min-w-0 flex-1">
+                  Brightness
+                </label>
+                <div className="flex items-center gap-3 flex-1 max-w-[200px]">
+                  <input
+                    name="brightness"
+                    className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.1"
+                    value={filters.brightness}
+                    onChange={handleFilterChange}
+                  />
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
+                    {filters.brightness}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-slate-600 dark:text-slate-400 min-w-0 flex-1">
+                  Contrast
+                </label>
+                <div className="flex items-center gap-3 flex-1 max-w-[200px]">
+                  <input
+                    name="contrast"
+                    className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.1"
+                    value={filters.contrast}
+                    onChange={handleFilterChange}
+                  />
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
+                    {filters.contrast}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-slate-600 dark:text-slate-400 min-w-0 flex-1">
+                  Grayscale
+                </label>
+                <div className="flex items-center gap-3 flex-1 max-w-[200px]">
+                  <input
+                    name="grayscale"
+                    className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={filters.grayscale}
+                    onChange={handleFilterChange}
+                  />
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
+                    {filters.grayscale}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-slate-600 dark:text-slate-400 min-w-0 flex-1">
+                  Blur
+                </label>
+                <div className="flex items-center gap-3 flex-1 max-w-[200px]">
+                  <input
+                    name="blur"
+                    className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    value={filters.blur}
+                    onChange={handleFilterChange}
+                  />
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
+                    {filters.blur}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-slate-600 dark:text-slate-400 min-w-0 flex-1">
+                  Hue Rotate
+                </label>
+                <div className="flex items-center gap-3 flex-1 max-w-[200px]">
+                  <input
+                    name="hueRotate"
+                    className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
+                    type="range"
+                    min="0"
+                    max="360"
+                    step="10"
+                    value={filters.hueRotate}
+                    onChange={handleFilterChange}
+                  />
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
+                    {filters.hueRotate}°
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-slate-600 dark:text-slate-400 min-w-0 flex-1">
+                  Invert
+                </label>
+                <div className="flex items-center gap-3 flex-1 max-w-[200px]">
+                  <input
+                    name="invert"
+                    className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={filters.invert}
+                    onChange={handleFilterChange}
+                  />
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
+                    {filters.invert}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-slate-600 dark:text-slate-400 min-w-0 flex-1">
+                  Opacity
+                </label>
+                <div className="flex items-center gap-3 flex-1 max-w-[200px]">
+                  <input
+                    name="opacity"
+                    className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={filters.opacity}
+                    onChange={handleFilterChange}
+                  />
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
+                    {filters.opacity}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-slate-600 dark:text-slate-400 min-w-0 flex-1">
+                  Saturate
+                </label>
+                <div className="flex items-center gap-3 flex-1 max-w-[200px]">
+                  <input
+                    name="saturate"
+                    className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.1"
+                    value={filters.saturate}
+                    onChange={handleFilterChange}
+                  />
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
+                    {filters.saturate}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-slate-600 dark:text-slate-400 min-w-0 flex-1">
+                  Sepia
+                </label>
+                <div className="flex items-center gap-3 flex-1 max-w-[200px]">
+                  <input
+                    name="sepia"
+                    className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={filters.sepia}
+                    onChange={handleFilterChange}
+                  />
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
+                    {filters.sepia}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
+              Export Settings
+            </h3>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                <svg
+                  className="size-4"
+                  stroke="currentColor"
+                  fill="currentColor"
+                  strokeWidth="0"
+                  viewBox="0 0 384 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48z" />
+                </svg>
+                File Name
+              </label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50/80 dark:bg-slate-700/50 border border-slate-200/50 dark:border-slate-600/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200"
+                value={fileName}
+                onChange={(e) => setFileName(e.target.value)}
+                placeholder="Enter filename..."
+              />
+            </div>
           </div>
           <button
-            className="flex items-center text-sm mt-2 px-4 py-2 rounded-lg font-medium border border-gray-700 bg-white dark:bg-black text-black dark:text-white hover:bg-gray-100 dark:hover:bg-[#121212]"
+            className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl font-medium bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
             type="button"
             onClick={handleReset}
           >
-            Reset
             <svg
+              className="size-4"
               stroke="currentColor"
               fill="currentColor"
               strokeWidth="0"
               viewBox="0 0 24 24"
-              height="16"
-              width="16"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <title>Reset</title>
               <path fill="none" d="M0 0h24v24H0V0z" />
               <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z" />
             </svg>
+            Reset All Settings
           </button>
         </div>
       )}
       {activeTabs === 'Edit' && (
         <>
-          <div className="p-4 my-2 rounded-xl text-sm">
-            <div>
-              <div className="flex flex-row justify-between">
-                <div className="flex items-center cursor-pointer mt-4 relative py-0.5 px-3 border border-gray-300 dark:border-gray-600 rounded-2xl mr-4 w-[45%]">
-                  <span>Color</span>
+          <div className="p-4 space-y-6">
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
+                Appearance
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-slate-50/80 dark:bg-slate-700/50 border border-slate-200/50 dark:border-slate-600/50 hover:bg-slate-100/80 dark:hover:bg-slate-600/50 transition-all duration-200">
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Text Color
+                  </span>
                   <span
-                    className="h-4 w-4 rounded-full ml-1 border border-gray-400"
+                    className="h-4 w-4 rounded-full border border-slate-300 dark:border-slate-500"
                     style={{ backgroundColor: 'rgb(0, 0, 0)' }}
                   />
-                </div>
-                <div className="flex items-center w-[45%] cursor-pointer mt-4 relative py-0.5 px-3 border border-gray-300 dark:border-gray-600 rounded-2xl">
-                  <span>Background</span>
+                </button>
+                <button className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-slate-50/80 dark:bg-slate-700/50 border border-slate-200/50 dark:border-slate-600/50 hover:bg-slate-100/80 dark:hover:bg-slate-600/50 transition-all duration-200">
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Background
+                  </span>
                   <span
-                    className="h-4 w-4 rounded-full ml-1 border border-gray-400"
+                    className="h-4 w-4 rounded-full border border-slate-300 dark:border-slate-500"
                     style={{ backgroundColor: 'rgb(255, 255, 255)' }}
                   />
-                </div>
+                </button>
               </div>
-              <div className="flex flex-row justify-between align-center mt-4">
-                <div className="flex flex-col items-center justify-center w-[70%]">
-                  <div className="flex flex-col items-start justify-center">
-                    <div
-                      style={{
-                        fontSize: '12px',
-                        marginBottom: '8px',
-                        fontWeight: '500',
-                        display: 'flex',
-                        alignItems: 'center',
-                        width: '100%',
-                      }}
-                    >
-                      <span className="mr-2 md:mr-0" style={{ flex: '1 1 0%' }}>
-                        Round
-                      </span>
+              <div className="space-y-4">
+                <h4 className="text-base font-semibold text-slate-800 dark:text-slate-200">
+                  Image Controls
+                </h4>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-slate-600 dark:text-slate-400 min-w-0 flex-1">
+                      Border Radius
+                    </label>
+                    <div className="flex items-center gap-3 flex-1 max-w-[200px]">
                       <input
-                        className="range accent-gray-600 mx-4 w-2/4"
+                        className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
                         type="range"
                         min="0"
                         max="60"
                         step="1"
-                        id="roundness"
                         value={imageBorder}
                         onChange={(e) => setImageBorder(Number(e.target.value))}
                       />
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '12px',
-                        marginBottom: '8px',
-                        fontWeight: '500',
-                        display: 'flex',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <span className="mr-2 md:mr-0" style={{ flex: '1 1 0%' }}>
-                        Shadow
+                      <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
+                        {imageBorder}px
                       </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-slate-600 dark:text-slate-400 min-w-0 flex-1">
+                      Shadow
+                    </label>
+                    <div className="flex items-center gap-3 flex-1 max-w-[200px]">
                       <input
-                        className="range accent-gray-600 mx-4 w-2/4"
+                        className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
                         type="range"
                         min="0"
                         max="100"
                         step="1"
-                        id="shadow"
                         value={imageShadow}
                         onChange={(e) => setImageShadow(Number(e.target.value))}
                       />
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '12px',
-                        marginBottom: '8px',
-                        fontWeight: '500',
-                        display: 'flex',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <span className="mr-2 md:mr-0" style={{ flex: '1 1 0%' }}>
-                        Padding
+                      <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
+                        {imageShadow}px
                       </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-slate-600 dark:text-slate-400 min-w-0 flex-1">
+                      Padding
+                    </label>
+                    <div className="flex items-center gap-3 flex-1 max-w-[200px]">
                       <input
-                        className="range accent-gray-600 mx-4 w-2/4"
+                        className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
                         type="range"
                         min="0"
                         max="10"
                         step="1"
-                        id="pdng"
                         value={paddingValue}
                         onChange={(e) =>
                           setPaddingValue(Number(e.target.value))
                         }
                       />
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '12px',
-                        marginBottom: '8px',
-                        fontWeight: '500',
-                        display: 'flex',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <span className="mr-2 md:mr-0" style={{ flex: '1 1 0%' }}>
-                        Scale
+                      <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
+                        {paddingValue}
                       </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-slate-600 dark:text-slate-400 min-w-0 flex-1">
+                      Scale
+                    </label>
+                    <div className="flex items-center gap-3 flex-1 max-w-[200px]">
                       <input
-                        className="range accent-gray-600 mx-4 w-2/4"
+                        className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
                         type="range"
                         min="0.15"
                         max="2"
                         step="0.1"
-                        id="scale"
                         value={imageScale}
                         onChange={(e) => setImageScale(Number(e.target.value))}
                       />
+                      <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
+                        {imageScale}x
+                      </span>
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col items-center border-l border-gray-400 px-4 py-2 w-[28%]">
-                  <span className="flex-1 font-medium px-3 py-1 mb-2 rounded-full border border-gray-600 cursor-pointer select-none text-sm bg-gray-100 dark:bg-[#1a1a1a] my-auto">
-                    Tilt
-                  </span>
-                  <div>
+              </div>
+              <div className="space-y-3">
+                <h4 className="text-base font-semibold text-slate-800 dark:text-slate-200">
+                  3D Transform
+                </h4>
+                <div className="flex justify-center">
+                  <div className="bg-slate-100/80 dark:bg-slate-700/50 p-4 rounded-2xl border border-slate-200/50 dark:border-slate-600/50">
+                    <div className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3 text-center">
+                      Tilt Control
+                    </div>
                     <div
+                      className="w-12 h-12 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-600 dark:to-slate-700 rounded-full flex items-center justify-center shadow-inner border border-slate-300/50 dark:border-slate-500/50"
                       data-testid="joystick-base"
-                      className=""
-                      style={{
-                        borderRadius: '40px',
-                        height: '40px',
-                        width: '40px',
-                        background: 'whitesmoke',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
                     >
                       <button
-                        className=""
+                        className="w-8 h-8 bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-300 dark:to-slate-100 rounded-full cursor-move transition-transform hover:scale-110 active:scale-95 shadow-lg"
                         type="button"
-                        style={{
-                          borderRadius: '40px',
-                          background: 'black',
-                          cursor: 'move',
-                          height: '26.666667px',
-                          width: '26.666667px',
-                          border: 'medium',
-                          flexShrink: '0',
-                          touchAction: 'none',
-                        }}
                       />
                     </div>
                   </div>
                 </div>
               </div>
-              <div
-                className="flex-wrap"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginTop: '8px',
-                }}
-              >
-                <h6 className="flex items-center text-sm font-medium">
-                  Frame
+            </div>
+            <div className="space-y-4">
+              <h4 className="text-base font-semibold text-slate-800 dark:text-slate-200">
+                Frame & Effects
+              </h4>
+              <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Frame Style
+                  </label>
                   <select
                     name="category"
-                    className="outline-none bg-white dark:bg-[#19191a] ml-2 px-2 py-1 border border-gray-600 rounded-full text-sm text-black dark:text-white"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50/80 dark:bg-slate-700/50 border border-slate-200/50 dark:border-slate-600/50 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-200"
                   >
                     <option value="none">None</option>
                     <option value="macOS-black">macOS Black</option>
@@ -922,89 +1027,67 @@ const EditorSidebar = ({
                     <option value="blueviolet">Blue Violet</option>
                     <option value="gold">Gold</option>
                   </select>
-                </h6>
-                <div
-                  className="bg-gray-100 dark:bg-[#1a1a1a]"
-                  style={{
-                    cursor: 'pointer',
-                    position: 'relative',
-                    display: 'flex',
-                    alignItems: 'center',
-                    padding: '2px 12px',
-                    border: '1px solid rgb(80, 80, 80)',
-                    borderRadius: '18px',
-                  }}
-                >
-                  <span>Shadow</span>
-                  <span
-                    style={{
-                      height: '16px',
-                      width: '16px',
-                      borderRadius: '50%',
-                      backgroundColor: 'rgb(30, 30, 30)',
-                      border: '1px solid gray',
-                      marginLeft: '4px',
-                    }}
-                  />
                 </div>
+                <button className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-slate-50/80 dark:bg-slate-700/50 border border-slate-200/50 dark:border-slate-600/50 hover:bg-slate-100/80 dark:hover:bg-slate-600/50 transition-all duration-200">
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Shadow Color
+                  </span>
+                  <span
+                    className="h-4 w-4 rounded-full border border-slate-300 dark:border-slate-500"
+                    style={{ backgroundColor: 'rgb(30, 30, 30)' }}
+                  />
+                </button>
               </div>
             </div>
           </div>
-          <div className="p-3 mt-3 rounded-xl text-sm w-full">
-            <div className="flex overflow-x-auto scroll-m-0 scrollbar-none">
+          <div className="space-y-4">
+            <h4 className="text-base font-semibold text-slate-800 dark:text-slate-200">
+              Transform Presets
+            </h4>
+            <div className="flex overflow-x-auto gap-3 pb-2 scrollbar-none">
               {[...Array(11)].map((_, index) => (
-                <div
-                  // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                <button
                   key={index}
                   className={cn(
-                    'flex-shrink-0 w-20 h-20 mr-2 rounded-sm',
-                    imageTransform === Transform[index] &&
-                      'border-[1px] border-black'
+                    'flex-shrink-0 w-20 h-20 rounded-2xl border-2 transition-all duration-200 overflow-hidden relative',
+                    imageTransform === Transform[index]
+                      ? 'border-blue-500 shadow-lg shadow-blue-200/50 dark:shadow-blue-900/50 scale-105'
+                      : 'border-slate-300/50 dark:border-slate-500/50 hover:border-slate-400 dark:hover:border-slate-400 hover:scale-105'
                   )}
                   style={{
                     background:
                       'linear-gradient(135deg, #FF002C, #FF0057, #FF0082, #FF00AD, #FF00D8, #C100FF, #8900FF, #5900FF, #2400FF)',
-                    backgroundSize: 'cover',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    filter:
-                      'brightness(1) contrast(1) grayscale(0) blur(0px) hue-rotate(0deg) invert(0) opacity(1) saturate(1) sepia(0)',
-                    opacity: 1,
                   }}
                   onClick={() => handleTransform(index)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      setImageTransform(Transform[index])
-                    }
-                  }}
                 >
                   <div
-                    className="w-12 h-12 bg-slate-50 border"
+                    className="w-12 h-12 bg-white/90 border border-slate-200 rounded-lg shadow-md absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                     style={{
                       transform: Transform[index],
                     }}
                   />
-                </div>
+                </button>
               ))}
             </div>
-            <div className="flex justify-center mt-4">
-              <div className="grid grid-cols-3 w-fit">
-                {Position.map((position, index) => (
-                  <div
-                    key={position}
-                    className={cn(
-                      'w-16 h-10 m-1 rounded bg-slate-200 dark:bg-slate-700',
-                      imagePosition === position && 'border-[1px] border-black'
-                    )}
-                    onClick={() => handlePosition(index)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        handlePosition(index)
-                      }
-                    }}
-                  />
-                ))}
+            <div className="space-y-3">
+              <h4 className="text-base font-semibold text-slate-800 dark:text-slate-200">
+                Padding Position
+              </h4>
+              <div className="flex justify-center">
+                <div className="grid grid-cols-3 gap-2 p-4 bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/50 dark:border-slate-600/50">
+                  {Position.map((position, index) => (
+                    <button
+                      key={position}
+                      className={cn(
+                        'w-12 h-8 rounded-lg transition-all duration-200 border-2',
+                        imagePosition === position
+                          ? 'bg-blue-500 border-blue-500 shadow-lg shadow-blue-200/50 dark:shadow-blue-900/50'
+                          : 'bg-slate-100 dark:bg-slate-600 border-slate-300/50 dark:border-slate-500/50 hover:bg-slate-200 dark:hover:bg-slate-500 hover:border-slate-400 dark:hover:border-slate-400'
+                      )}
+                      onClick={() => handlePosition(index)}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -1013,52 +1096,40 @@ const EditorSidebar = ({
       {activeTabs === 'Background' && (
         <>
           {/* sub menu */}
-          <div className="w-full flex flex-row items-center justify-between rounded-b-xl p-2 text-xs font-medium border bg-gray-50 dark:bg-[#0f0f0f] dark:border-gray-950">
-            <p
+          <div className="w-full flex flex-row items-center justify-center gap-1 rounded-2xl p-2 bg-slate-50/80 dark:bg-slate-700/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-600/50 mb-4">
+            <button
               className={cn(
-                'w-full text-center py-2 rounded-[10px] cursor-pointer  font-semibold hover:bg-gray-200 dark:hover:bg-[#121212] ',
-                subActiveTabs === 'Gradient' &&
-                  'bg-white dark:bg-[#1a1a1a] shadow-md'
+                'flex-1 py-2 px-3 rounded-xl font-medium text-sm transition-all duration-200',
+                subActiveTabs === 'Gradient'
+                  ? 'bg-blue-500 text-white shadow-md'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-600/50 hover:text-slate-800 dark:hover:text-slate-200'
               )}
               onClick={() => handleSubActiveTabChange('Gradient')}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleSubActiveTabChange('Gradient')
-                }
-              }}
             >
               Gradient
-            </p>
-            <p
+            </button>
+            <button
               className={cn(
-                'w-full text-center py-2 rounded-[10px] cursor-pointer font-semibold hover:bg-gray-200 dark:hover:bg-[#121212] mx-1',
-                subActiveTabs === 'Image' &&
-                  'bg-white dark:bg-[#1a1a1a] shadow-md'
+                'flex-1 py-2 px-3 rounded-xl font-medium text-sm transition-all duration-200',
+                subActiveTabs === 'Image'
+                  ? 'bg-blue-500 text-white shadow-md'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-600/50 hover:text-slate-800 dark:hover:text-slate-200'
               )}
               onClick={() => handleSubActiveTabChange('Image')}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleSubActiveTabChange('Image')
-                }
-              }}
             >
               Image
-            </p>
-            <p
+            </button>
+            <button
               className={cn(
-                'w-full text-center py-2 rounded-[10px] cursor-pointer font-semibold hover:bg-gray-200 dark:hover:bg-[#121212] mx-1',
-                subActiveTabs === 'Solid' &&
-                  'bg-white dark:bg-[#1a1a1a] shadow-md'
+                'flex-1 py-2 px-3 rounded-xl font-medium text-sm transition-all duration-200',
+                subActiveTabs === 'Solid'
+                  ? 'bg-blue-500 text-white shadow-md'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-600/50 hover:text-slate-800 dark:hover:text-slate-200'
               )}
               onClick={() => handleSubActiveTabChange('Solid')}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleSubActiveTabChange('Solid')
-                }
-              }}
             >
               Solid
-            </p>
+            </button>
           </div>
 
           {/* gradient */}
@@ -1097,21 +1168,18 @@ const EditorSidebar = ({
                   </span>
                 ))}
               </div>
-              <div className="flex w-full flex-wrap max-h-[20vh] md:max-h-[40vh] overflow-y-scroll scroll-m-0 justify-center bg-white dark:bg-[#0f0f0f] dark:border-gray-700 border-gray-300 rounded-xl mt-2 p-1">
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3 max-h-[20vh] md:max-h-[40vh] overflow-y-auto p-3 sm:p-4 bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/50 dark:border-slate-600/50">
                 {Gradients.map((gradient, index) => (
-                  <span
+                  <button
                     className={cn(
-                      'block h-8 w-8 m-1 rounded-md border border-gray-400 cursor-pointer',
-                      selectedGradient === gradient && 'border-1 rounded-full'
+                      'aspect-square rounded-xl border-2 transition-all duration-200 hover:scale-105 active:scale-95',
+                      selectedGradient === gradient
+                        ? 'border-blue-500 shadow-lg shadow-blue-200/50 dark:shadow-blue-900/50 scale-105'
+                        : 'border-slate-300/50 dark:border-slate-500/50 hover:border-slate-400 dark:hover:border-slate-400'
                     )}
                     style={{ background: gradient }}
                     key={gradient}
                     onClick={() => handleGradientChange(gradient)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        handleGradientChange(gradient)
-                      }
-                    }}
                   />
                 ))}
               </div>
@@ -1121,23 +1189,24 @@ const EditorSidebar = ({
           {/* image */}
           {subActiveTabs === 'Image' && (
             <>
-              <div className="flex w-full flex-wrap max-h-[20vh] md:max-h-[40vh] overflow-y-scroll scroll-m-0 justify-center bg-white dark:bg-[#0f0f0f] dark:border-gray-700 border-gray-300 rounded-xl mt-2 p-1">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-3 max-h-[20vh] md:max-h-[40vh] overflow-y-auto p-3 sm:p-4 bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/50 dark:border-slate-600/50">
                 {Array.from({ length: 70 }, (_, i) => i + 1).map((number) => (
-                  <img
+                  <button
                     key={number}
-                    src={`/test${number}.webp`}
-                    alt={`bg ${number}`}
                     className={cn(
-                      'h-12 w-12 m-1 aspect-square rounded-sm object-cover',
-                      selectedImage === number && ' rounded-full'
+                      'aspect-square rounded-xl border-2 transition-all duration-200 hover:scale-105 active:scale-95 overflow-hidden',
+                      selectedImage === number
+                        ? 'border-blue-500 shadow-lg shadow-blue-200/50 dark:shadow-blue-900/50 scale-105'
+                        : 'border-slate-300/50 dark:border-slate-500/50 hover:border-slate-400 dark:hover:border-slate-400'
                     )}
                     onClick={() => handleImageChange(number)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        handleImageChange(number)
-                      }
-                    }}
-                  />
+                  >
+                    <img
+                      src={`/test${number}.webp`}
+                      alt={`bg ${number}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
                 ))}
               </div>
             </>
@@ -1145,21 +1214,18 @@ const EditorSidebar = ({
 
           {/* solid */}
           {subActiveTabs === 'Solid' && (
-            <div className="flex w-full flex-wrap max-h-[20vh] md:max-h-[40vh] overflow-y-scroll scroll-m-0 justify-center bg-white dark:bg-[#0f0f0f] dark:border-gray-700 border-gray-300 rounded-xl mt-2 p-1">
+            <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3 max-h-[20vh] md:max-h-[40vh] overflow-y-auto p-3 sm:p-4 bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/50 dark:border-slate-600/50">
               {PlainColors.map((plainColor, index) => (
-                <span
+                <button
                   className={cn(
-                    'block h-8 w-8 m-1 rounded-md border border-gray-400 cursor-pointer',
-                    selectedSolidColor === plainColor && 'border-1 rounded-full'
+                    'aspect-square rounded-xl border-2 transition-all duration-200 hover:scale-105 active:scale-95',
+                    selectedSolidColor === plainColor
+                      ? 'border-blue-500 shadow-lg shadow-blue-200/50 dark:shadow-blue-900/50 scale-105'
+                      : 'border-slate-300/50 dark:border-slate-500/50 hover:border-slate-400 dark:hover:border-slate-400'
                   )}
                   style={{ background: plainColor }}
                   key={plainColor}
                   onClick={() => handleSolidColorChange(plainColor)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      handleSolidColorChange(plainColor)
-                    }
-                  }}
                 />
               ))}
             </div>
@@ -1167,33 +1233,39 @@ const EditorSidebar = ({
         </>
       )}
 
-      <label className="inline-flex items-center m-2 my-8 cursor-pointer">
-        <input
-          id="showWatermark"
-          type="checkbox"
-          className="sr-only peer"
-          value=""
-          checked={showWatermark}
-          onChange={() => setShowWatermark(!showWatermark)}
-        />
-        <div className="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-teal-600" />
-        <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-100">
-          Show Watermark
-        </span>
-      </label>
-      <a
-        className="flex flex-col border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white p-3 rounded-sm transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-700 mx-2"
-        href="/pricing"
-      >
-        <button className="flex items-center text-sm" type="button">
-          <span className="text-yellow-500 mr-2.5">👑</span>
-          <span>Upgrade</span>
-        </button>
-      </a>
-      <p className="text-xs mt-2">
-        Get 50% off on <span className="font-semibold">Lifetime</span> deal, use
-        code <span className="font-semibold font-mono">NEW50</span>
-      </p>
+      <div className="p-4 border-t border-slate-200/50 dark:border-slate-600/50">
+        <label className="inline-flex items-center gap-3 cursor-pointer">
+          <input
+            id="showWatermark"
+            type="checkbox"
+            className="sr-only peer"
+            checked={showWatermark}
+            onChange={() => setShowWatermark(!showWatermark)}
+          />
+          <div className="relative w-10 h-6 bg-slate-200 dark:bg-slate-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300/50 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500 shadow-inner" />
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Show Watermark
+          </span>
+        </label>
+      </div>
+      <div className="p-4 border-t border-slate-200/50 dark:border-slate-600/50 space-y-3">
+        <a
+          className="block w-full p-4 rounded-2xl bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+          href="/pricing"
+        >
+          <div className="flex items-center justify-center gap-2 text-white font-semibold">
+            <span className="text-2xl">👑</span>
+            <span>Upgrade to Pro</span>
+          </div>
+        </a>
+        <p className="text-xs text-center text-slate-600 dark:text-slate-400">
+          Get <span className="font-semibold text-orange-500">50% off</span> on{' '}
+          <span className="font-semibold">Lifetime</span> deal, use code{' '}
+          <span className="font-semibold font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-orange-500">
+            NEW50
+          </span>
+        </p>
+      </div>
     </div>
   )
 }
