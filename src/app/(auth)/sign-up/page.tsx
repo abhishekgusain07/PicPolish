@@ -13,27 +13,13 @@ export default function SignUp() {
     setLoading(true)
     setError(null)
     try {
-      await authClient.signIn.social(
-        {
-          provider,
-          callbackURL: '/dashboard',
-        },
-        {
-          onRequest: () => {
-            setLoading(true)
-          },
-          onSuccess: () => {
-            router.push('/dashboard')
-          },
-          onError: (ctx) => {
-            setError(ctx.error.message)
-          },
-        }
-      )
+      await authClient.signIn.social({
+        provider,
+        callbackURL: '/dashboard',
+      })
     } catch (error) {
       console.error('Signup error:', error)
       setError('An unexpected error occurred. Please try again.')
-    } finally {
       setLoading(false)
     }
   }
