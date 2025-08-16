@@ -18,7 +18,7 @@ type ActiveTabs = 'Settings' | 'Edit' | 'Background'
 type SubActiveTabs = 'Gradient' | 'Image' | 'Solid'
 const initialTransform = 'perspective(500px) rotateY(0deg) rotateX(0deg)'
 const initialPosition = '1 1 1 1'
-const initialFileName = 'ToolsArsenal_2348239234'
+const initialFileName = 'picpolish_2348239234'
 const initialLinearGradient =
   'linear-gradient(135deg, rgb(255, 0, 44), rgb(255, 0, 87), rgb(255, 0, 130), rgb(255, 0, 173), rgb(255, 0, 216))'
 
@@ -115,7 +115,7 @@ export function YoutubeThumbnail() {
       id="maindiv"
       className="h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 lg:p-6 overflow-hidden"
     >
-      <div className="flex flex-col xl:flex-row gap-4 lg:gap-6 max-w-7xl mx-auto h-full">
+      <div className="flex flex-col xl:flex-row gap-4 lg:gap-6 h-full">
         {/* Preview Card */}
         <div className="flex-1 xl:w-[70%] order-2 xl:order-1 h-full">
           <Card className="h-full backdrop-blur-sm bg-white/70 dark:bg-slate-800/70 border-slate-200/50 dark:border-slate-700/50 shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50">
@@ -236,7 +236,7 @@ const ThumbnailComponent = ({
 }: ThumbnailComponentProps) => {
   const [showWatermark, setShowWatermark] = useState(true)
   const [watermarkStyle, setWatermarkStyle] = useState('dark')
-  const [watermarkText, setWatermarkText] = useState('ToolsArsenal')
+  const [watermarkText, setWatermarkText] = useState('picpolish')
   const [showWaterMarkOptions, setShowWaterMarkOptions] = useState(false)
   const [url, setUrl] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
@@ -632,11 +632,6 @@ const EditorSidebar = ({
     console.log('🛑 JOYSTICK STOPPED - Total events received:', eventCounter)
     setJoystickActive(false)
     // Keep the current position when joystick is released
-  }
-
-  const testTransform = () => {
-    console.log('Testing manual transform')
-    setImageTransform('perspective(500px) rotateY(15deg) rotateX(10deg)')
   }
   return (
     <div
@@ -1083,12 +1078,6 @@ const EditorSidebar = ({
                         stop={handleJoystickStop}
                         throttle={50}
                       />
-                      <button
-                        onClick={testTransform}
-                        className="text-xs px-2 py-1 bg-blue-500 text-white rounded"
-                      >
-                        Test Transform
-                      </button>
                     </div>
                   </div>
                 </div>
