@@ -34,14 +34,14 @@ export function OverlaySelector({
   return (
     <div className="space-y-4">
       {/* Overlay Grid */}
-      <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3 max-h-[20vh] md:max-h-[40vh] overflow-y-auto p-3 sm:p-4 bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/50 dark:border-slate-600/50">
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 sm:gap-4 max-h-[20vh] md:max-h-[40vh] overflow-y-auto p-3 sm:p-4 bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/50 dark:border-slate-600/50">
         {/* None Option */}
         <button
           className={cn(
-            'aspect-square rounded-xl border-2 transition-all duration-200 hover:scale-105 active:scale-95 flex items-center justify-center text-xs font-medium',
+            'aspect-square border-2 transition-all duration-200 hover:scale-105 active:scale-95 flex items-center justify-center text-xs font-medium',
             selectedOverlay === OVERLAY_NONE
-              ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 shadow-lg shadow-blue-200/50 dark:shadow-blue-900/50 scale-105'
-              : 'border-slate-300/50 dark:border-slate-500/50 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-400'
+              ? 'rounded-full border-black bg-black text-white shadow-lg scale-105'
+              : 'rounded-xl border-slate-300/50 dark:border-slate-500/50 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-400 dark:hover:border-slate-400'
           )}
           onClick={() => handleOverlaySelect(OVERLAY_NONE)}
         >
@@ -57,10 +57,10 @@ export function OverlaySelector({
             <button
               key={overlay.id}
               className={cn(
-                'aspect-square rounded-xl border-2 transition-all duration-200 hover:scale-105 active:scale-95 overflow-hidden relative',
+                'aspect-square border-2 transition-all duration-200 hover:scale-105 active:scale-95 overflow-hidden relative',
                 isSelected
-                  ? 'border-blue-500 shadow-lg shadow-blue-200/50 dark:shadow-blue-900/50 scale-105'
-                  : 'border-slate-300/50 dark:border-slate-500/50 hover:border-slate-400 dark:hover:border-slate-400'
+                  ? 'rounded-full border-black shadow-lg scale-105'
+                  : 'rounded-xl border-slate-300/50 dark:border-slate-500/50 hover:border-slate-400 dark:hover:border-slate-400'
               )}
               onClick={() => handleOverlaySelect(overlay.id)}
             >
