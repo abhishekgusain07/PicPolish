@@ -16,6 +16,7 @@ import extractTweetId, {
 import { type Tweet } from 'rettiwt-api'
 import { Bookmark, HeartIcon, Repeat2, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/stateful-button'
+import { Joystick } from 'react-joystick-component'
 
 type ActiveTabs = 'Settings' | 'Edit' | 'Background'
 type SubActiveTabs = 'Gradient' | 'Image' | 'Solid'
@@ -693,6 +694,9 @@ const EditorSidebar = ({
     PlainColors[0]
   )
   const [selectedImage, setSelectedImage] = useState<number>(1)
+  const [joystickActive, setJoystickActive] = useState(false)
+  const [baseTransform, setBaseTransform] = useState(initialTransform)
+  const [eventCounter, setEventCounter] = useState(0)
 
   // extract rgb values from gradient
   function extractRGBValues(gradient: string) {
@@ -738,6 +742,57 @@ const EditorSidebar = ({
   }
   const handleTweetLikesAndSharesToggle = () => {
     setShowTweetLikesAndShares(!showTweetLikesAndShares)
+  }
+
+  const handleJoystickStart = () => {
+    console.log(
+      '🎮 JOYSTICK STARTED - capturing base transform:',
+      imageTransform
+    )
+    setJoystickActive(true)
+    setBaseTransform(imageTransform)
+    setEventCounter(0)
+  }
+
+  const handleJoystickMove = (event: {
+    x: number | null
+    y: number | null
+  }) => {
+    if (!joystickActive) return
+
+    setEventCounter((prev) => prev + 1)
+
+    const xVal = event.x || 0
+    const yVal = event.y || 0
+
+    console.log(`🎮 JOYSTICK MOVE #${eventCounter + 1}:`, {
+      raw: { x: event.x, y: event.y },
+      processed: { xVal, yVal },
+      baseTransform,
+    })
+
+    // Scale factors for rotation sensitivity
+    const scaleFactorX = 45 // Max 45 degrees rotation on X axis
+    const scaleFactorY = 45 // Max 45 degrees rotation on Y axis
+
+    console.log('Using scale factors - X:', scaleFactorX, 'Y:', scaleFactorY)
+
+    // Convert joystick coordinates to rotation degrees
+    const rotateY = xVal * scaleFactorX // Scale rotation
+    const rotateX = -yVal * scaleFactorY // Negative for intuitive up/down movement
+
+    const newTransform = `perspective(500px) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`
+
+    console.log('New transform:', newTransform)
+    setImageTransform(newTransform)
+
+    console.log('=== END JOYSTICK DEBUG ===\n')
+  }
+
+  const handleJoystickStop = () => {
+    console.log('🛑 JOYSTICK STOPPED - Total events received:', eventCounter)
+    setJoystickActive(false)
+    // Keep the current position when joystick is released
   }
   return (
     <div
@@ -1132,36 +1187,20 @@ const EditorSidebar = ({
                   </div>
                 </div>
                 <div className="flex flex-col items-center border-l border-gray-400 px-4 py-2 w-[28%]">
-                  <span className="flex-1 font-medium px-3 py-1 mb-2 rounded-full border border-gray-600 cursor-pointer select-none text-sm bg-gray-100 dark:bg-[#1a1a1a] my-auto">
-                    Tilt
-                  </span>
-                  <div>
-                    <div
-                      data-testid="joystick-base"
-                      className=""
-                      style={{
-                        borderRadius: '40px',
-                        height: '40px',
-                        width: '40px',
-                        background: 'whitesmoke',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <button
-                        className=""
-                        type="button"
-                        style={{
-                          borderRadius: '40px',
-                          background: 'black',
-                          cursor: 'move',
-                          height: '26.666667px',
-                          width: '26.666667px',
-                          border: 'medium',
-                          flexShrink: '0',
-                          touchAction: 'none',
-                        }}
+                  <div className="bg-slate-100/80 dark:bg-slate-700/50 p-4 rounded-2xl border border-slate-200/50 dark:border-slate-600/50">
+                    <div className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3 text-center">
+                      Tilt Control
+                    </div>
+                    <div className="flex flex-col items-center gap-2">
+                      <Joystick
+                        size={60}
+                        stickSize={25}
+                        baseColor="rgba(148, 163, 184, 0.3)"
+                        stickColor="rgba(71, 85, 105, 0.8)"
+                        start={handleJoystickStart}
+                        move={handleJoystickMove}
+                        stop={handleJoystickStop}
+                        throttle={50}
                       />
                     </div>
                   </div>
