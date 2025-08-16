@@ -5,8 +5,12 @@ import { cn } from '@/lib/utils'
 import {
   ArrowLeftFromLine,
   ArrowRightFromLine,
+  Home,
   PanelLeft,
+  Play,
   Settings,
+  Camera,
+  Twitter,
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -76,18 +80,17 @@ export const ToolsSidebar = () => {
               className={cn(
                 buttonVariants({
                   variant: 'ghost',
-                  className: 'w-full justify-start gap-2 px-3 py-2',
+                  className:
+                    'w-full justify-start gap-3 px-4 py-3 text-base min-h-[44px]',
                 }),
                 pathname === '/tools' &&
                   'bg-stone-200 hover:bg-stone-200 text-accent-foreground'
               )}
             >
-              <div className="size-6 flex items-center justify-center flex-shrink-0">
-                🏠
-              </div>
+              <Home className="size-5 flex-shrink-0" />
               <span
                 className={cn(
-                  'transition-all opacity-0 duration-200 ease-out delay-200',
+                  'transition-all opacity-0 duration-200 ease-out delay-200 text-base',
                   isCollapsed
                     ? 'opacity-0 w-0 overflow-hidden hidden'
                     : 'opacity-100'
@@ -116,18 +119,17 @@ export const ToolsSidebar = () => {
                 className={cn(
                   buttonVariants({
                     variant: 'ghost',
-                    className: 'justify-start gap-2 px-3 py-2',
+                    className:
+                      'justify-start gap-3 px-4 py-3 text-base min-h-[44px]',
                   }),
                   pathname.includes('/tools/youtube') &&
                     'bg-stone-200 hover:bg-stone-200 text-accent-foreground'
                 )}
               >
-                <div className="size-6 flex items-center justify-center flex-shrink-0">
-                  🎬
-                </div>
+                <Play className="size-5 flex-shrink-0" />
                 <span
                   className={cn(
-                    'transition-all duration-200 ease-out',
+                    'transition-all duration-200 ease-out text-base',
                     isCollapsed
                       ? 'opacity-0 w-0 overflow-hidden'
                       : 'opacity-100'
@@ -142,18 +144,17 @@ export const ToolsSidebar = () => {
                 className={cn(
                   buttonVariants({
                     variant: 'ghost',
-                    className: 'justify-start gap-2 px-3 py-2',
+                    className:
+                      'justify-start gap-3 px-4 py-3 text-base min-h-[44px]',
                   }),
                   pathname === '/tools/twitter' &&
                     'bg-stone-200 hover:bg-stone-200 text-accent-foreground'
                 )}
               >
-                <div className="size-6 flex items-center justify-center flex-shrink-0">
-                  🐦
-                </div>
+                <Twitter className="size-5 flex-shrink-0" />
                 <span
                   className={cn(
-                    'transition-all duration-200 ease-out',
+                    'transition-all duration-200 ease-out text-base',
                     isCollapsed
                       ? 'opacity-0 w-0 overflow-hidden'
                       : 'opacity-100'
@@ -168,18 +169,17 @@ export const ToolsSidebar = () => {
                 className={cn(
                   buttonVariants({
                     variant: 'ghost',
-                    className: 'justify-start gap-2 px-3 py-2',
+                    className:
+                      'justify-start gap-3 px-4 py-3 text-base min-h-[44px]',
                   }),
                   pathname === '/tools/screenshot' &&
                     'bg-stone-200 hover:bg-stone-200 text-accent-foreground'
                 )}
               >
-                <div className="size-6 flex items-center justify-center flex-shrink-0">
-                  🖼️
-                </div>
+                <Camera className="size-5 flex-shrink-0" />
                 <span
                   className={cn(
-                    'transition-all duration-200 ease-out',
+                    'transition-all duration-200 ease-out text-base',
                     isCollapsed
                       ? 'opacity-0 w-0 overflow-hidden'
                       : 'opacity-100'
@@ -194,6 +194,33 @@ export const ToolsSidebar = () => {
       </SidebarContent>
 
       <SidebarFooter className="border-t border-border/40 p-4">
+        {/* Settings when expanded */}
+        <div
+          className={cn(
+            'transition-all duration-200 ease-out overflow-hidden',
+            isCollapsed ? 'opacity-0 max-h-0' : 'opacity-100 max-h-[1000px]'
+          )}
+        >
+          <div className="flex flex-col gap-2">
+            <Link
+              href="/tools/settings"
+              className={cn(
+                buttonVariants({
+                  variant: 'ghost',
+                  className:
+                    'w-full justify-start gap-3 px-4 py-3 text-base min-h-[44px]',
+                }),
+                pathname === '/tools/settings' &&
+                  'bg-stone-200 hover:bg-stone-200 text-accent-foreground'
+              )}
+            >
+              <Settings className="size-5 flex-shrink-0" />
+              <span className="text-base">Settings</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Settings when collapsed */}
         <div
           className={cn(
             'transition-all duration-0 ease-out overflow-hidden',
@@ -201,14 +228,15 @@ export const ToolsSidebar = () => {
           )}
         >
           <div className="flex flex-col gap-2">
-            <button
+            <Link
+              href="/tools/settings"
               className={buttonVariants({
                 variant: 'ghost',
                 className: 'text-muted-foreground hover:text-foreground',
               })}
             >
               <Settings className="size-5" />
-            </button>
+            </Link>
           </div>
         </div>
       </SidebarFooter>
