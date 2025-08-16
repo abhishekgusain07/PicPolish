@@ -22,14 +22,16 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   useSidebar,
 } from './ui/sidebar'
 
 export const ToolsSidebar = () => {
-  const { state } = useSidebar()
+  const { state, toggleSidebar } = useSidebar()
   const pathname = usePathname()
   const isCollapsed = state === 'collapsed'
-  const { toggleSidebar } = useSidebar()
 
   return (
     <Sidebar
@@ -37,7 +39,7 @@ export const ToolsSidebar = () => {
       side="left"
       className="border-r border-border/40"
     >
-      <SidebarHeader className="border-b border-border/40 p-4">
+      <SidebarHeader className="border-b border-border/40 p-2">
         <div className="flex items-center justify-start gap-2">
           <button
             onClick={toggleSidebar}
@@ -52,199 +54,107 @@ export const ToolsSidebar = () => {
               )}
             </div>
           </button>
-          <div
-            className={cn(
-              'flex items-center gap-1 transition-all duration-200 ease-out',
-              isCollapsed
-                ? 'opacity-0 w-0 overflow-hidden sr-only'
-                : 'opacity-100'
-            )}
-          >
-            <p className={cn('text-sm/6 text-stone-800 ')}>PicPolish</p>
-          </div>
+          {!isCollapsed && (
+            <p className="text-sm/6 text-stone-800 transition-opacity duration-200">
+              PicPolish
+            </p>
+          )}
         </div>
       </SidebarHeader>
 
       <SidebarContent>
         {/* Main Tools Group */}
         <SidebarGroup>
-          <SidebarGroupLabel
-            className={cn(
-              'transition-all duration-200 ease-out px-3',
-              isCollapsed
-                ? 'opacity-0 w-0 overflow-hidden sr-only'
-                : 'opacity-100'
-            )}
-          >
-            Tools Hub
-          </SidebarGroupLabel>
+          {!isCollapsed && (
+            <SidebarGroupLabel className="px-3 transition-opacity duration-200">
+              Tools Hub
+            </SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
-            <Link
-              href="/tools"
-              className={cn(
-                buttonVariants({
-                  variant: 'ghost',
-                  className:
-                    'w-full justify-start gap-3 px-4 py-3 text-base min-h-[44px]',
-                }),
-                pathname === '/tools' &&
-                  'bg-stone-200 hover:bg-stone-200 text-accent-foreground'
-              )}
-            >
-              <Home className="size-5 flex-shrink-0" />
-              <span
-                className={cn(
-                  'transition-all duration-200 ease-out text-base',
-                  isCollapsed
-                    ? 'opacity-0 w-0 overflow-hidden sr-only'
-                    : 'opacity-100'
-                )}
-              >
-                Home
-              </span>
-            </Link>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === '/tools'}
+                  tooltip="Home"
+                >
+                  <Link href="/tools">
+                    <Home className="size-5" />
+                    {!isCollapsed && <span>Home</span>}
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         {/* Content Creation Group */}
         <SidebarGroup>
-          <SidebarGroupLabel
-            className={cn(
-              'transition-all duration-200 ease-out px-3',
-              isCollapsed
-                ? 'opacity-0 w-0 overflow-hidden sr-only'
-                : 'opacity-100'
-            )}
-          >
-            Content Creation
-          </SidebarGroupLabel>
+          {!isCollapsed && (
+            <SidebarGroupLabel className="px-3 transition-opacity duration-200">
+              Content Creation
+            </SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
-            <div className="flex flex-col gap-1">
-              <Link
-                href="/tools/youtube"
-                className={cn(
-                  buttonVariants({
-                    variant: 'ghost',
-                    className:
-                      'justify-start gap-3 px-4 py-3 text-base min-h-[44px]',
-                  }),
-                  pathname.includes('/tools/youtube') &&
-                    'bg-stone-200 hover:bg-stone-200 text-accent-foreground'
-                )}
-              >
-                <Play className="size-5 flex-shrink-0" />
-                <span
-                  className={cn(
-                    'transition-all duration-200 ease-out text-base',
-                    isCollapsed
-                      ? 'opacity-0 w-0 overflow-hidden sr-only'
-                      : 'opacity-100'
-                  )}
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname.includes('/tools/youtube')}
+                  tooltip="YouTube Tool"
                 >
-                  YouTube Tool
-                </span>
-              </Link>
+                  <Link href="/tools/youtube">
+                    <Play className="size-5" />
+                    {!isCollapsed && <span>YouTube Tool</span>}
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
 
-              <Link
-                href="/tools/twitter"
-                className={cn(
-                  buttonVariants({
-                    variant: 'ghost',
-                    className:
-                      'justify-start gap-3 px-4 py-3 text-base min-h-[44px]',
-                  }),
-                  pathname === '/tools/twitter' &&
-                    'bg-stone-200 hover:bg-stone-200 text-accent-foreground'
-                )}
-              >
-                <Twitter className="size-5 flex-shrink-0" />
-                <span
-                  className={cn(
-                    'transition-all duration-200 ease-out text-base',
-                    isCollapsed
-                      ? 'opacity-0 w-0 overflow-hidden sr-only'
-                      : 'opacity-100'
-                  )}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === '/tools/twitter'}
+                  tooltip="Twitter Tool"
                 >
-                  Twitter Tool
-                </span>
-              </Link>
+                  <Link href="/tools/twitter">
+                    <Twitter className="size-5" />
+                    {!isCollapsed && <span>Twitter Tool</span>}
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
 
-              <Link
-                href="/tools/screenshot"
-                className={cn(
-                  buttonVariants({
-                    variant: 'ghost',
-                    className:
-                      'justify-start gap-3 px-4 py-3 text-base min-h-[44px]',
-                  }),
-                  pathname === '/tools/screenshot' &&
-                    'bg-stone-200 hover:bg-stone-200 text-accent-foreground'
-                )}
-              >
-                <Camera className="size-5 flex-shrink-0" />
-                <span
-                  className={cn(
-                    'transition-all duration-200 ease-out text-base',
-                    isCollapsed
-                      ? 'opacity-0 w-0 overflow-hidden sr-only'
-                      : 'opacity-100'
-                  )}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === '/tools/screenshot'}
+                  tooltip="Screenshot Tool"
                 >
-                  Screenshot Tool
-                </span>
-              </Link>
-            </div>
+                  <Link href="/tools/screenshot">
+                    <Camera className="size-5" />
+                    {!isCollapsed && <span>Screenshot Tool</span>}
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-border/40 p-4">
-        {/* Settings when expanded */}
-        <div
-          className={cn(
-            'transition-all duration-200 ease-out overflow-hidden',
-            isCollapsed ? 'opacity-0 max-h-0' : 'opacity-100 max-h-[1000px]'
-          )}
-        >
-          <div className="flex flex-col gap-2">
-            <Link
-              href="/tools/settings"
-              className={cn(
-                buttonVariants({
-                  variant: 'ghost',
-                  className:
-                    'w-full justify-start gap-3 px-4 py-3 text-base min-h-[44px]',
-                }),
-                pathname === '/tools/settings' &&
-                  'bg-stone-200 hover:bg-stone-200 text-accent-foreground'
-              )}
+      <SidebarFooter className="border-t border-border/40 p-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={pathname === '/tools/settings'}
+              tooltip="Settings"
             >
-              <Settings className="size-5 flex-shrink-0" />
-              <span className="text-base">Settings</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* Settings when collapsed */}
-        <div
-          className={cn(
-            'transition-all duration-0 ease-out overflow-hidden',
-            isCollapsed ? 'opacity-100 max-h-[1000px]' : 'opacity-0 max-h-0'
-          )}
-        >
-          <div className="flex flex-col gap-2">
-            <Link
-              href="/tools/settings"
-              className={buttonVariants({
-                variant: 'ghost',
-                className: 'text-muted-foreground hover:text-foreground',
-              })}
-            >
-              <Settings className="size-5" />
-            </Link>
-          </div>
-        </div>
+              <Link href="/tools/settings">
+                <Settings className="size-5" />
+                {!isCollapsed && <span>Settings</span>}
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   )

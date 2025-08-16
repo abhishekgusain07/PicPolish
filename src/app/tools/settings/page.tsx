@@ -74,7 +74,6 @@ const Page = () => {
     maxApiCalls: 100,
   }
 
-  // Calculate usage percentage for API calls (main metric for Beautify)
   const apiUsagePercentage =
     planLimits.maxApiCalls === -1
       ? 0

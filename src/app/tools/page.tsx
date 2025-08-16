@@ -43,7 +43,7 @@ export default function ToolsPage() {
   }, [searchQuery])
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <div className="px-6 py-8">
         <div className="mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
