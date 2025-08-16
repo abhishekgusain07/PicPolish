@@ -55,7 +55,9 @@ export const ToolsSidebar = () => {
           <div
             className={cn(
               'flex items-center gap-1 transition-all duration-200 ease-out',
-              isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'
+              isCollapsed
+                ? 'opacity-0 w-0 overflow-hidden sr-only'
+                : 'opacity-100'
             )}
           >
             <p className={cn('text-sm/6 text-stone-800 ')}>PicPolish</p>
@@ -69,7 +71,9 @@ export const ToolsSidebar = () => {
           <SidebarGroupLabel
             className={cn(
               'transition-all duration-200 ease-out px-3',
-              isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'
+              isCollapsed
+                ? 'opacity-0 w-0 overflow-hidden sr-only'
+                : 'opacity-100'
             )}
           >
             Tools Hub
@@ -90,9 +94,9 @@ export const ToolsSidebar = () => {
               <Home className="size-5 flex-shrink-0" />
               <span
                 className={cn(
-                  'transition-all opacity-0 duration-200 ease-out delay-200 text-base',
+                  'transition-all duration-200 ease-out text-base',
                   isCollapsed
-                    ? 'opacity-0 w-0 overflow-hidden hidden'
+                    ? 'opacity-0 w-0 overflow-hidden sr-only'
                     : 'opacity-100'
                 )}
               >
@@ -107,7 +111,9 @@ export const ToolsSidebar = () => {
           <SidebarGroupLabel
             className={cn(
               'transition-all duration-200 ease-out px-3',
-              isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'
+              isCollapsed
+                ? 'opacity-0 w-0 overflow-hidden sr-only'
+                : 'opacity-100'
             )}
           >
             Content Creation
@@ -131,7 +137,7 @@ export const ToolsSidebar = () => {
                   className={cn(
                     'transition-all duration-200 ease-out text-base',
                     isCollapsed
-                      ? 'opacity-0 w-0 overflow-hidden'
+                      ? 'opacity-0 w-0 overflow-hidden sr-only'
                       : 'opacity-100'
                   )}
                 >
@@ -156,7 +162,7 @@ export const ToolsSidebar = () => {
                   className={cn(
                     'transition-all duration-200 ease-out text-base',
                     isCollapsed
-                      ? 'opacity-0 w-0 overflow-hidden'
+                      ? 'opacity-0 w-0 overflow-hidden sr-only'
                       : 'opacity-100'
                   )}
                 >
@@ -181,7 +187,7 @@ export const ToolsSidebar = () => {
                   className={cn(
                     'transition-all duration-200 ease-out text-base',
                     isCollapsed
-                      ? 'opacity-0 w-0 overflow-hidden'
+                      ? 'opacity-0 w-0 overflow-hidden sr-only'
                       : 'opacity-100'
                   )}
                 >
