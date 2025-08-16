@@ -2,6 +2,7 @@ import { ArchiveRestoreIcon } from 'lucide-react'
 import { PreviewProps } from '@/types/thumbnail'
 import { ImageDisplay } from './ImageDisplay'
 import { WatermarkOverlay } from './WatermarkOverlay'
+import { OverlayLayer } from './OverlayLayer'
 
 export function ThumbnailPreview({
   editorState,
@@ -60,6 +61,11 @@ export function ThumbnailPreview({
           editorState={editorState}
           onImageFetch={onImageFetch}
           config={config}
+        />
+
+        <OverlayLayer
+          selectedOverlay={backgroundState.selectedOverlay}
+          overlayOpacity={backgroundState.overlayOpacity}
         />
 
         <WatermarkOverlay watermarkState={watermarkState} config={config} />

@@ -1,5 +1,5 @@
 export type ActiveTab = 'Settings' | 'Edit' | 'Background'
-export type SubActiveTab = 'Gradient' | 'Image' | 'Solid'
+export type SubActiveTab = 'Gradient' | 'Image' | 'Solid' | 'Overlay'
 export type WatermarkStyle = 'dark' | 'light' | 'glassy'
 export type ExportFormat = 'png' | 'jpeg' | 'svg' | 'webp'
 export type ExportQuality = '1' | '2' | '4' | '6' | '8'
@@ -36,6 +36,8 @@ export interface BackgroundState {
   selectedSolidColor: string
   selectedImage: number
   gradientColors: string[]
+  selectedOverlay: string | null
+  overlayOpacity: number
 }
 
 export interface ColorPickerState {
@@ -139,6 +141,18 @@ export interface TransformControlsProps {
 export interface BackgroundSelectorProps {
   backgroundState: BackgroundState
   updateBackgroundState: (updates: Partial<BackgroundState>) => void
+}
+
+export interface OverlaySelectorProps {
+  selectedOverlay: string | null
+  overlayOpacity: number
+  onOverlayChange: (overlay: string | null) => void
+  onOpacityChange: (opacity: number) => void
+}
+
+export interface OverlayLayerProps {
+  selectedOverlay: string | null
+  overlayOpacity: number
 }
 
 export interface ApiResponse {

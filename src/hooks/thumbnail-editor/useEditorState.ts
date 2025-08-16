@@ -16,6 +16,7 @@ import {
 } from '@/types/thumbnail'
 import { Gradients } from '@/constants/gradient'
 import { PlainColors } from '@/constants/plainColors'
+import { DEFAULT_OVERLAY_OPACITY, OVERLAY_NONE } from '@/constants/overlays'
 import { extractHexColorsWithValidation } from '@/lib/color-utils'
 
 interface EditorStateContext {
@@ -44,6 +45,8 @@ const createInitialBackgroundState = (): BackgroundState => {
     selectedSolidColor: PlainColors[0],
     selectedImage: 1,
     gradientColors: extractedColors,
+    selectedOverlay: OVERLAY_NONE,
+    overlayOpacity: DEFAULT_OVERLAY_OPACITY,
   }
 }
 
