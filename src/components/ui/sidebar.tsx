@@ -171,14 +171,19 @@ const SidebarProvider = React.forwardRef<
           <div
             style={
               {
-                // * update '--sidebar-width' to use the new width state
+                // Keep CSS variables for backward compatibility with other features
                 '--sidebar-width': width,
                 '--sidebar-width-icon': SIDEBAR_WIDTH_ICON,
                 ...style,
               } as React.CSSProperties
             }
             className={cn(
-              'group/sidebar-wrapper flex min-h-svh w-full has-[[data-variant=inset]]:bg-sidebar',
+              'group/sidebar-wrapper grid min-h-svh w-full has-[[data-variant=inset]]:bg-sidebar',
+              // Use CSS Grid with responsive columns based on sidebar state
+              // Mobile: single column (sidebar will be handled by mobile sheet)
+              'grid-cols-1',
+              // Desktop: responsive columns based on sidebar state
+              open ? 'md:grid-cols-[16rem_1fr]' : 'md:grid-cols-[4rem_1fr]',
               className
             )}
             ref={ref}
@@ -253,45 +258,29 @@ const Sidebar = React.forwardRef<
     return (
       <div
         ref={ref}
-        className="group peer hidden md:block text-sidebar-foreground"
+        className={cn(
+          'group peer hidden md:flex text-sidebar-foreground',
+          // Use normal positioning as a grid item instead of fixed positioning
+          'h-svh w-full flex-col bg-sidebar',
+          // Add border for left sidebar
+          side === 'left' && 'border-r border-sidebar-border',
+          side === 'right' && 'border-l border-sidebar-border',
+          // Handle floating and inset variants
+          variant === 'floating' &&
+            'rounded-lg border border-sidebar-border shadow',
+          variant === 'inset' && 'm-2 rounded-xl shadow',
+          // Responsive behavior for mobile (hidden) and desktop (flex)
+          'transition-all duration-200 ease-linear',
+          className
+        )}
         data-state={state}
         data-collapsible={state === 'collapsed' ? collapsible : ''}
         data-variant={variant}
         data-side={side}
         data-dragging={isDraggingRail}
+        {...props}
       >
-        <div
-          className={cn(
-            'duration-200 relative h-svh w-[--sidebar-width] bg-transparent transition-[width] ease-linear',
-            'group-data-[collapsible=offcanvas]:w-0',
-            'group-data-[side=right]:rotate-180',
-            variant === 'floating' || variant === 'inset'
-              ? 'group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]'
-              : 'group-data-[collapsible=icon]:w-[--sidebar-width-icon]',
-            'group-data-[dragging=true]:!duration-0 group-data-[dragging=true]_*:!duration-0'
-          )}
-        />
-        <div
-          className={cn(
-            'duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width,transform] ease-linear md:flex',
-            side === 'left'
-              ? 'left-0 group-data-[collapsible=offcanvas]:-translate-x-full'
-              : 'right-0 group-data-[collapsible=offcanvas]:translate-x-full',
-            variant === 'floating' || variant === 'inset'
-              ? 'p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+2px)]'
-              : 'group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l',
-            'group-data-[dragging=true]:!duration-0 group-data-[dragging=true]_*:!duration-0',
-            className
-          )}
-          {...props}
-        >
-          <div
-            data-sidebar="sidebar"
-            className="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
-          >
-            {children}
-          </div>
-        </div>
+        {children}
       </div>
     )
   }
@@ -391,12 +380,12 @@ const SidebarInset = React.forwardRef<
     <main
       ref={ref}
       className={cn(
-        'relative flex min-h-svh flex-1 flex-col bg-background',
+        // Use normal flex container as a grid item (no flex-1 needed)
+        'relative flex min-h-svh flex-col bg-background',
+        // Handle inset variant styles
         'peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow',
-        // Add proper margins for the sidebar
-        'md:peer-data-[state=expanded]:ml-[--sidebar-width] md:peer-data-[state=collapsed]:ml-[--sidebar-width-icon]',
-        // Handle transitions
-        'transition-[margin] duration-200 ease-linear',
+        // Grid positioning: take up the second column automatically
+        'w-full overflow-hidden',
         className
       )}
       {...props}
