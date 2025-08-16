@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { EditorState, ImageState, PlatformConfig } from '@/types/thumbnail'
 import { Button } from '@/components/ui/stateful-button'
+import TweetPage from '@/app/tools/twitter/tweet'
 
 interface ImageDisplayProps {
   imageState: ImageState
@@ -21,7 +22,9 @@ export function ImageDisplay({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('Form submitted with URL:', inputUrl)
     if (inputUrl.trim()) {
+      console.log('Starting image fetch...')
       setIsLoading(true)
       setShowSuccess(false)
       try {
@@ -32,6 +35,8 @@ export function ImageDisplay({
       } finally {
         setIsLoading(false)
       }
+    } else {
+      console.log('URL is empty, not submitting')
     }
   }
 
@@ -120,6 +125,15 @@ export function ImageDisplay({
             Try Again
           </button>
         </div>
+      </div>
+    )
+  }
+
+  // Handle Twitter data rendering
+  if (imageState.url === 'twitter-data-loaded' && imageState.tweetData) {
+    return (
+      <div style={getImageContainerStyle()}>
+        <TweetPage {...imageState.tweetData} />
       </div>
     )
   }

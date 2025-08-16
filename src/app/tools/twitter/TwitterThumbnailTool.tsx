@@ -14,7 +14,6 @@ const twitterConfig: PlatformConfig = {
   buttonText: 'Get Tweet',
   validationRules: {
     urlPattern: /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\//,
-    requiredDomain: 'twitter',
   },
 }
 

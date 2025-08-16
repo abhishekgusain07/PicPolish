@@ -57,6 +57,7 @@ export interface ImageState {
   url: string
   isLoading: boolean
   error: boolean
+  tweetData?: Record<string, unknown>
 }
 
 export interface ExportSettings {
