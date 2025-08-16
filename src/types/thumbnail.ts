@@ -192,3 +192,78 @@ export const DEFAULT_EXPORT_SETTINGS: ExportSettings = {
   quality: '2',
   format: 'png',
 }
+
+// Screenshot Tool Types
+export type ScreenshotMode = 'select' | 'preview' | 'editing'
+export type ImageSource = 'upload' | 'capture' | null
+export type CaptureType = 'screen' | 'window' | 'tab'
+
+export interface ScreenshotState {
+  mode: ScreenshotMode
+  imageSource: ImageSource
+  imageBlob: Blob | null
+  imageUrl: string | null
+  filename: string
+  originalFile?: File
+}
+
+export interface LocalImageConfig
+  extends Omit<PlatformConfig, 'apiEndpoint' | 'validationRules'> {
+  mode: 'local'
+  supportedTypes: string[]
+  maxFileSize: number
+  allowMultiple: boolean
+}
+
+export interface CaptureOptions {
+  type: CaptureType
+  audio: boolean
+  video: {
+    mediaSource: string
+    width?: { max: number }
+    height?: { max: number }
+  }
+}
+
+export interface ScreenshotToolProps {
+  className?: string
+}
+
+export interface ImagePreviewProps {
+  imageUrl: string
+  filename: string
+  fileSize?: number
+  fileType?: string
+  onEdit: () => void
+  onRetake: () => void
+}
+
+export interface LocalImageEditorProps {
+  imageUrl: string
+  filename: string
+  onBack: () => void
+  config: LocalImageConfig
+}
+
+export const DEFAULT_SCREENSHOT_STATE: ScreenshotState = {
+  mode: 'select',
+  imageSource: null,
+  imageBlob: null,
+  imageUrl: null,
+  filename: 'screenshot',
+}
+
+export const DEFAULT_LOCAL_CONFIG: LocalImageConfig = {
+  name: 'Screenshot Editor',
+  placeholderText: 'Drop your image here or click to upload',
+  defaultFileName: 'screenshot_edited',
+  watermarkText: 'ScreenshotTool',
+  supportedFormats: ['png', 'jpeg', 'webp'],
+  defaultFormat: 'png',
+  inputLabel: 'Upload Image',
+  buttonText: 'Start Editing',
+  mode: 'local',
+  supportedTypes: ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'],
+  maxFileSize: 10 * 1024 * 1024, // 10MB
+  allowMultiple: false,
+}
