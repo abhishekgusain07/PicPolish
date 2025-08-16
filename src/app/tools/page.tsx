@@ -2,8 +2,6 @@
 
 import Link from 'next/link'
 import { useState, useMemo } from 'react'
-import { motion } from 'framer-motion'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import DuolingoBadge from '@/components/ui/duolingo-badge'
 import DuolingoButton from '@/components/ui/duolingo-button'
 import { tools, getToolStats } from '@/constants/tools'
@@ -116,37 +114,110 @@ export default function ToolsPage() {
                 : 'flex flex-col space-y-4'
             )}
           >
-            {/* Tool cards will be implemented in Phase 4 */}
             {filteredTools.map((tool) => (
-              <motion.div
+              <div
                 key={tool.id}
-                whileHover={{ scale: viewMode === 'grid' ? 1.04 : 1.01 }}
-                transition={{ type: 'spring', stiffness: 200, damping: 12 }}
                 className={cn(
                   'group relative h-full',
                   viewMode === 'list' ? 'w-full' : ''
                 )}
               >
-                <Card className="overflow-hidden rounded-2xl shadow-xl border-none h-full">
+                <Link
+                  href={tool.href}
+                  className={cn(
+                    'block h-full',
+                    viewMode === 'list' ? 'w-full' : ''
+                  )}
+                >
                   <div
-                    className={`h-28 bg-gradient-to-r ${tool.gradient} flex items-center justify-center text-5xl`}
+                    className={cn(
+                      'bg-white rounded-2xl border-2 border-gray-200 hover:border-indigo-300 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 p-6',
+                      viewMode === 'list'
+                        ? 'flex items-center gap-6'
+                        : 'h-full flex flex-col justify-between'
+                    )}
                   >
-                    {tool.icon}
-                  </div>
-                  <CardHeader>
-                    <CardTitle className="text-lg">{tool.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600 text-sm">{tool.description}</p>
-                    <Link
-                      href={tool.href}
-                      className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-pink-500 hover:text-pink-600"
+                    <div
+                      className={cn(
+                        'flex flex-wrap items-center gap-2 mb-4',
+                        viewMode === 'list' ? 'mb-0 flex-shrink-0' : ''
+                      )}
                     >
-                      Open Tool <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                      <DuolingoBadge className="px-2" variant="achievement">
+                        {tool.category}
+                      </DuolingoBadge>
+                      {tool.isPopular && (
+                        <DuolingoBadge className="px-2" variant="streak">
+                          popular
+                        </DuolingoBadge>
+                      )}
+                      {tool.assetCount && (
+                        <DuolingoBadge className="px-2" variant="level">
+                          {tool.assetCount} assets
+                        </DuolingoBadge>
+                      )}
+                    </div>
+
+                    <div
+                      className={cn(
+                        viewMode === 'list' ? 'flex-1 min-w-0' : ''
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          'flex items-center gap-3 mb-3',
+                          viewMode === 'list' ? 'mb-2' : ''
+                        )}
+                      >
+                        <div
+                          className={`text-3xl ${viewMode === 'list' ? 'text-2xl' : ''}`}
+                        >
+                          {tool.icon}
+                        </div>
+                        <h3
+                          className={cn(
+                            'font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors',
+                            viewMode === 'list'
+                              ? 'text-lg line-clamp-1'
+                              : 'text-xl line-clamp-2'
+                          )}
+                        >
+                          {tool.name}
+                        </h3>
+                      </div>
+
+                      <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed mb-4">
+                        {tool.description}
+                      </p>
+
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {tool.features.slice(0, 3).map((feature, index) => (
+                          <span
+                            key={index}
+                            className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
+                          >
+                            {feature}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div
+                      className={cn(
+                        'flex items-center justify-between',
+                        viewMode === 'list'
+                          ? 'flex-shrink-0 flex-col items-end gap-1'
+                          : 'mt-auto pt-4'
+                      )}
+                    >
+                      <div className="flex items-center gap-2 text-sm font-medium text-indigo-600 group-hover:text-indigo-700 transition-colors">
+                        <span>Open Tool</span>
+                        <ArrowRight className="h-4 w-4" />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
             ))}
           </div>
         )}
