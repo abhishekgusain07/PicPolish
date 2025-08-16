@@ -1,5 +1,5 @@
-import { YoutubeThumbnail } from './youtubethumbnailcomp'
+import { YoutubeThumbnailTool } from './YoutubeThumbnailTool'
 
 export default function YoutubePage() {
-  return <YoutubeThumbnail />
+  return <YoutubeThumbnailTool />
 }
