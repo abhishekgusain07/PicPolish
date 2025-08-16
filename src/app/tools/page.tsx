@@ -43,8 +43,8 @@ export default function ToolsPage() {
   }, [searchQuery])
 
   return (
-    <div className="relative z-10 min-h-screen">
-      <div className="max-w-7xl mx-auto px-6 py-8">
+    <div className="min-h-screen">
+      <div className="px-6 py-8">
         <div className="mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
             <div>
