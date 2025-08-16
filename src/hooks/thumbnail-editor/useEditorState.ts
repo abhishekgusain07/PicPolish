@@ -16,6 +16,7 @@ import {
 } from '@/types/thumbnail'
 import { Gradients } from '@/constants/gradient'
 import { PlainColors } from '@/constants/plainColors'
+import { extractHexColors } from '@/lib/color-utils'
 
 interface EditorStateContext {
   editorState: EditorState
@@ -26,16 +27,23 @@ interface EditorStateContext {
   exportSettings: ExportSettings
 }
 
-const createInitialBackgroundState = (): BackgroundState => ({
-  subActiveTab: 'Gradient',
-  linearGradient:
-    'linear-gradient(135deg, rgb(72, 219, 251), rgb(108, 92, 231))',
-  backgroundImage: 1,
-  solidColor: PlainColors[0],
-  selectedGradient: Gradients[0],
-  selectedSolidColor: PlainColors[0],
-  selectedImage: 1,
-})
+const createInitialBackgroundState = (): BackgroundState => {
+  const defaultGradient =
+    'linear-gradient(135deg, rgb(72, 219, 251), rgb(108, 92, 231))'
+  const extractedColors = extractHexColors(defaultGradient)
+
+  return {
+    subActiveTab: 'Gradient',
+    linearGradient: defaultGradient,
+    backgroundImage: 1,
+    solidColor: PlainColors[0],
+    selectedGradient: Gradients[0],
+    selectedSolidColor: PlainColors[0],
+    selectedImage: 1,
+    gradientColors:
+      extractedColors.length > 0 ? extractedColors : ['#48dbfb', '#6c5ce7'],
+  }
+}
 
 const createInitialState = (config: PlatformConfig): EditorStateContext => ({
   editorState: {
@@ -97,7 +105,9 @@ function editorReducer(
       }
 
     case 'RESET_ALL':
-      return createInitialState(action.payload.config)
+      return createInitialState(
+        (action.payload as { config: PlatformConfig }).config
+      )
 
     default:
       return state

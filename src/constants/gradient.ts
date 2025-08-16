@@ -1,7 +1,7 @@
 export const Gradients = [
   'linear-gradient(135deg, rgb(72, 219, 251), rgb(108, 92, 231))',
   'linear-gradient(135deg, rgb(116, 185, 255), rgb(162, 155, 254))',
-  'linear-gradient(135deg, rgb(72, 219, 251), rgb(108, 92, 231))',
+  'linear-gradient(135deg, rgb(30, 144, 255), rgb(75, 0, 130))',
   'linear-gradient(135deg, rgb(85, 239, 196), rgb(129, 236, 236))',
   'linear-gradient(135deg, rgb(59, 130, 246), rgb(96, 165, 250))',
   'linear-gradient(135deg, rgb(162, 155, 254), rgb(108, 92, 231))',

@@ -1,22 +1,94 @@
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
-import { BackgroundSelectorProps, SubActiveTab } from '@/types/thumbnail'
+import {
+  BackgroundSelectorProps,
+  SubActiveTab,
+  ColorPickerState,
+} from '@/types/thumbnail'
 import { Gradients } from '@/constants/gradient'
 import { PlainColors } from '@/constants/plainColors'
+import { ColorPickerModal } from '@/components/ui/color-picker-modal'
+import {
+  extractHexColors,
+  reconstructGradient,
+  updateGradientColor,
+} from '@/lib/color-utils'
 
 export function BackgroundSelector({
   backgroundState,
   updateBackgroundState,
 }: BackgroundSelectorProps) {
+  const [colorPicker, setColorPicker] = useState<ColorPickerState>({
+    isOpen: false,
+    colorIndex: 0,
+    position: { x: 0, y: 0 },
+  })
+
   const handleSubActiveTabChange = (tab: SubActiveTab) => {
     updateBackgroundState({ subActiveTab: tab })
   }
 
   const handleGradientChange = (gradient: string) => {
+    const colors = extractHexColors(gradient)
     updateBackgroundState({
       selectedGradient: gradient,
       linearGradient: gradient,
+      gradientColors: colors,
     })
+  }
+
+  const handleColorSwatchClick = (event: React.MouseEvent, index: number) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const rect = event.currentTarget.getBoundingClientRect()
+    console.log('Color swatch clicked', {
+      index,
+      rect,
+      currentColors: backgroundState.gradientColors,
+    })
+    setColorPicker({
+      isOpen: true,
+      colorIndex: index,
+      position: {
+        x: rect.left,
+        y: rect.top,
+      },
+    })
+  }
+
+  const handleColorChange = (newColor: string) => {
+    const updatedColors = updateGradientColor(
+      backgroundState.gradientColors,
+      colorPicker.colorIndex,
+      newColor
+    )
+    const newGradient = reconstructGradient(updatedColors)
+
+    updateBackgroundState({
+      gradientColors: updatedColors,
+      linearGradient: newGradient,
+      selectedGradient: newGradient,
+    })
+  }
+
+  const handleColorSave = (finalColor: string) => {
+    const updatedColors = updateGradientColor(
+      backgroundState.gradientColors,
+      colorPicker.colorIndex,
+      finalColor
+    )
+    const newGradient = reconstructGradient(updatedColors)
+
+    updateBackgroundState({
+      gradientColors: updatedColors,
+      linearGradient: newGradient,
+      selectedGradient: newGradient,
+    })
+  }
+
+  const handleColorPickerClose = () => {
+    setColorPicker((prev) => ({ ...prev, isOpen: false }))
   }
 
   const handleSolidColorChange = (color: string) => {
@@ -31,11 +103,6 @@ export function BackgroundSelector({
       backgroundImage: imageNumber,
       selectedImage: imageNumber,
     })
-  }
-
-  const extractRGBValues = (gradient: string) => {
-    const rgbRegex = /rgb\(\d{1,3},\s*\d{1,3},\s*\d{1,3}\)/g
-    return gradient.match(rgbRegex)
   }
 
   return (
@@ -81,38 +148,38 @@ export function BackgroundSelector({
       {backgroundState.subActiveTab === 'Gradient' && (
         <div className="space-y-4">
           <Input type="Color" className="w-full h-10" />
-          <div className="flex mt-3">
-            {extractRGBValues(backgroundState.selectedGradient)?.map(
-              (color) => (
-                <span
-                  style={{
-                    background: color,
-                    height: '30px',
-                    width: '30px',
-                    margin: '4px',
-                    borderRadius: '4px',
-                    border: '1px solid gray',
-                    position: 'relative',
-                  }}
-                  key={color}
-                >
-                  <span className="absolute -top-2 -right-1 bg-white dark:bg-[rgb(5,50,50)] flex justify-center items-center rounded-full p-1">
-                    <svg
-                      stroke="currentColor"
-                      fill="currentColor"
-                      strokeWidth="0"
-                      viewBox="0 0 24 24"
-                      height="1em"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path fill="none" d="M0 0h24v24H0V0z" />
-                      <path d="m17.66 5.41.92.92-2.69 2.69-.92-.92 2.69-2.69M17.67 3c-.26 0-.51.1-.71.29l-3.12 3.12-1.93-1.91-1.41 1.41 1.42 1.42L3 16.25V21h4.75l8.92-8.92 1.42 1.42 1.41-1.41-1.92-1.92 3.12-3.12c.4-.4.4-1.03.01-1.42l-2.34-2.34c-.2-.19-.45-.29-.7-.29zM6.92 19 5 17.08l8.06-8.06 1.92 1.92L6.92 19z" />
-                    </svg>
-                  </span>
+          <div className="flex mt-3 gap-2">
+            {backgroundState.gradientColors?.map((color, index) => (
+              <button
+                key={`${color}-${index}`}
+                onClick={(e) => handleColorSwatchClick(e, index)}
+                className="relative group hover:scale-105 transition-transform duration-200"
+                style={{
+                  background: color,
+                  height: '36px',
+                  width: '36px',
+                  borderRadius: '8px',
+                  border: '2px solid rgba(0,0,0,0.1)',
+                  cursor: 'pointer',
+                }}
+              >
+                <span className="absolute -top-1 -right-1 bg-white dark:bg-slate-800 shadow-md flex justify-center items-center rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <svg
+                    stroke="currentColor"
+                    fill="currentColor"
+                    strokeWidth="0"
+                    viewBox="0 0 24 24"
+                    height="14px"
+                    width="14px"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="text-slate-600 dark:text-slate-300"
+                  >
+                    <path fill="none" d="M0 0h24v24H0V0z" />
+                    <path d="m17.66 5.41.92.92-2.69 2.69-.92-.92 2.69-2.69M17.67 3c-.26 0-.51.1-.71.29l-3.12 3.12-1.93-1.91-1.41 1.41 1.42 1.42L3 16.25V21h4.75l8.92-8.92 1.42 1.42 1.41-1.41-1.92-1.92 3.12-3.12c.4-.4.4-1.03.01-1.42l-2.34-2.34c-.2-.19-.45-.29-.7-.29zM6.92 19 5 17.08l8.06-8.06 1.92 1.92L6.92 19z" />
+                  </svg>
                 </span>
-              )
-            )}
+              </button>
+            ))}
           </div>
           <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3 max-h-[20vh] md:max-h-[40vh] overflow-y-auto p-3 sm:p-4 bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/50 dark:border-slate-600/50">
             {Gradients.map((gradient) => (
@@ -174,6 +241,18 @@ export function BackgroundSelector({
           ))}
         </div>
       )}
+
+      {/* Color Picker Modal */}
+      <ColorPickerModal
+        isOpen={colorPicker.isOpen}
+        color={
+          backgroundState.gradientColors?.[colorPicker.colorIndex] || '#000000'
+        }
+        position={colorPicker.position}
+        onColorChange={handleColorChange}
+        onSave={handleColorSave}
+        onClose={handleColorPickerClose}
+      />
     </div>
   )
 }

@@ -35,6 +35,13 @@ export interface BackgroundState {
   selectedGradient: string
   selectedSolidColor: string
   selectedImage: number
+  gradientColors: string[]
+}
+
+export interface ColorPickerState {
+  isOpen: boolean
+  colorIndex: number
+  position: { x: number; y: number }
 }
 
 export interface WatermarkState {
