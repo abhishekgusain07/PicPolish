@@ -17,8 +17,8 @@ export function ScreenshotTool({ className }: ScreenshotToolProps) {
     DEFAULT_SCREENSHOT_STATE
   )
 
-  // Helper function to create blob URL from file
-  const createBlobUrl = useCallback((file: File): string => {
+  // Helper function to create blob URL from file or blob
+  const createBlobUrl = useCallback((file: File | Blob): string => {
     return URL.createObjectURL(file)
   }, [])
 
@@ -89,7 +89,7 @@ export function ScreenshotTool({ className }: ScreenshotToolProps) {
         // Configure capture options based on type
         const captureOptions: DisplayMediaStreamOptions = {
           video: {
-            mediaSource: captureType,
+            displaySurface: captureType,
             ...(captureType === 'screen' && {
               width: { max: 1920 },
               height: { max: 1080 },
@@ -159,10 +159,10 @@ export function ScreenshotTool({ className }: ScreenshotToolProps) {
           mediaStream.getTracks().forEach((track) => track.stop())
         }
       } catch (error) {
-        console.error('Screen capture error:', error)
         if (error instanceof Error && error.name === 'NotAllowedError') {
           toast.error('Screen capture permission denied')
         } else {
+          console.error('Screen capture error:', error)
           toast.error('Failed to capture screen')
         }
       }

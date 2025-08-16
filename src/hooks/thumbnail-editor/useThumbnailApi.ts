@@ -70,12 +70,21 @@ export function useThumbnailApi({
 
         const data: ApiResponse = await response.json()
 
-        if (!data.thumbnails?.maxres) {
-          throw new Error('Invalid response format')
+        // Try different thumbnail qualities in order of preference
+        const thumbnailUrl =
+          data.thumbnails?.maxresolution ||
+          data.thumbnails?.maxres ||
+          data.thumbnails?.standard ||
+          data.thumbnails?.high ||
+          data.thumbnails?.medium ||
+          data.thumbnails?.default
+
+        if (!thumbnailUrl) {
+          throw new Error('No thumbnail found in response')
         }
 
         updateImageState({
-          url: data.thumbnails.maxres,
+          url: thumbnailUrl,
           isLoading: false,
           error: false,
         })
