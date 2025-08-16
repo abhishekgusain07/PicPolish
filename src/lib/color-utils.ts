@@ -123,7 +123,7 @@ export function extractHexColorsWithValidation(gradient: string): string[] {
 
   // Ensure we have at least 2 colors for a gradient
   if (validColors.length === 0) {
-    return ['#48dbfb', '#6c5ce7'] // Default blue gradient
+    return ['#ff002c', '#ff00d8'] // Default pink gradient
   }
   if (validColors.length === 1) {
     return [validColors[0], '#ffffff'] // Add white as second color

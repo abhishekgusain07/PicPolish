@@ -72,8 +72,8 @@ export function BackgroundSelector({
       colorPicker.colorIndex
     )
     const currentColors = backgroundState.gradientColors || [
-      '#48dbfb',
-      '#6c5ce7',
+      '#ff002c',
+      '#ff00d8',
     ]
 
     const updatedColors = updateGradientColor(
@@ -100,8 +100,8 @@ export function BackgroundSelector({
       colorPicker.colorIndex
     )
     const currentColors = backgroundState.gradientColors || [
-      '#48dbfb',
-      '#6c5ce7',
+      '#ff002c',
+      '#ff00d8',
     ]
 
     const updatedColors = updateGradientColor(
@@ -190,7 +190,7 @@ export function BackgroundSelector({
             {(backgroundState.gradientColors &&
             backgroundState.gradientColors.length > 0
               ? backgroundState.gradientColors
-              : ['#48dbfb', '#6c5ce7']
+              : ['#ff002c', '#ff00d8']
             ).map((color, index) => (
               <button
                 key={`${color}-${index}`}
@@ -288,10 +288,10 @@ export function BackgroundSelector({
       <ColorPickerModal
         isOpen={colorPicker.isOpen}
         color={sanitizeHexColor(
-          (backgroundState.gradientColors || ['#48dbfb', '#6c5ce7'])[
+          (backgroundState.gradientColors || ['#ff002c', '#ff00d8'])[
             colorPicker.colorIndex
-          ] || '#48dbfb',
-          '#48dbfb'
+          ] || '#ff002c',
+          '#ff002c'
         )}
         position={colorPicker.position}
         onColorChange={handleColorChange}

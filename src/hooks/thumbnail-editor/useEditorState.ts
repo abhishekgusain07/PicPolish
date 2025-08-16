@@ -29,7 +29,7 @@ interface EditorStateContext {
 
 const createInitialBackgroundState = (): BackgroundState => {
   const defaultGradient =
-    'linear-gradient(135deg, rgb(72, 219, 251), rgb(108, 92, 231))'
+    'linear-gradient(135deg, rgb(255, 0, 44), rgb(255, 0, 130), rgb(255, 0, 216))'
 
   // Use validation function to ensure we always have valid colors
   const extractedColors = extractHexColorsWithValidation(defaultGradient)
