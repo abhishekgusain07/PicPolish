@@ -1,5 +1,5 @@
-import TwitterEditor from './TwitterEditor'
+import { TwitterThumbnailTool } from './TwitterThumbnailTool'
 
 export default function TwitterPage() {
-  return <TwitterEditor />
+  return <TwitterThumbnailTool />
 }

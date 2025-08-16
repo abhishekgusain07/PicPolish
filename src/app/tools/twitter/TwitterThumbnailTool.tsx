@@ -4,16 +4,16 @@ import { PlatformConfig } from '@/types/thumbnail'
 
 const twitterConfig: PlatformConfig = {
   name: 'Twitter',
-  apiEndpoint: '/api/twitter',
-  placeholderText: 'Paste twitter post URL here',
+  apiEndpoint: '/api/media/twitter',
+  placeholderText: 'Paste Tweet URL here',
   defaultFileName: 'twitter_thumbnail_2348239234',
   watermarkText: 'TweetEditor',
   supportedFormats: ['png', 'jpeg', 'webp'],
   defaultFormat: 'png',
-  inputLabel: 'Enter Twitter URL here',
-  buttonText: 'Get tweet image',
+  inputLabel: 'Enter Tweet 𝕏 here',
+  buttonText: 'Get Tweet',
   validationRules: {
-    urlPattern: /^(https?:\/\/)?(www\.)?(twitter\.com\/|x\.com\/)/,
+    urlPattern: /^(https?:\/\/)?(www\.)?(twitter\.com|x\.com)\//,
     requiredDomain: 'twitter',
   },
 }
