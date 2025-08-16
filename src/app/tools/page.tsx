@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import DuolingoBadge from '@/components/ui/duolingo-badge'
 import DuolingoButton from '@/components/ui/duolingo-button'
 import { tools, getToolStats } from '@/constants/tools'
@@ -13,6 +13,20 @@ export default function ToolsPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
   const toolStats = getToolStats()
+
+  // Load view mode from localStorage on mount
+  useEffect(() => {
+    const savedViewMode = localStorage.getItem('picpolish-tools-view-mode')
+    if (savedViewMode === 'grid' || savedViewMode === 'list') {
+      setViewMode(savedViewMode)
+    }
+  }, [])
+
+  // Save view mode to localStorage when it changes
+  const handleViewModeChange = (mode: 'grid' | 'list') => {
+    setViewMode(mode)
+    localStorage.setItem('picpolish-tools-view-mode', mode)
+  }
 
   const filteredTools = useMemo(() => {
     if (!searchQuery.trim()) return tools
@@ -65,7 +79,7 @@ export default function ToolsPage() {
             <div className="flex gap-2">
               <div className="flex border-2 border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
                 <button
-                  onClick={() => setViewMode('grid')}
+                  onClick={() => handleViewModeChange('grid')}
                   className={cn(
                     'p-3 transition-colors',
                     viewMode === 'grid'
@@ -76,7 +90,7 @@ export default function ToolsPage() {
                   <Grid className="size-5" />
                 </button>
                 <button
-                  onClick={() => setViewMode('list')}
+                  onClick={() => handleViewModeChange('list')}
                   className={cn(
                     'p-3 transition-colors',
                     viewMode === 'list'
@@ -88,6 +102,26 @@ export default function ToolsPage() {
                 </button>
               </div>
             </div>
+          </div>
+
+          <div className="flex flex-wrap gap-3 mb-6">
+            <DuolingoBadge variant="achievement" size="md">
+              ⭐ {toolStats.popularCount} Popular Tools
+            </DuolingoBadge>
+            <DuolingoBadge variant="streak" size="md">
+              🎨 {toolStats.totalAssets} Design Assets
+            </DuolingoBadge>
+            <DuolingoBadge variant="level" size="md">
+              📱 {toolStats.categoryCounts.social || 0} Social Tools
+            </DuolingoBadge>
+            <DuolingoBadge variant="xp" size="md">
+              🖼️ {toolStats.categoryCounts.image || 0} Image Tools
+            </DuolingoBadge>
+            {searchQuery && (
+              <DuolingoBadge variant="gray" size="md">
+                🔍 {filteredTools.length} Found
+              </DuolingoBadge>
+            )}
           </div>
         </div>
 
