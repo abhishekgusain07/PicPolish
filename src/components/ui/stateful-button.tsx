@@ -6,68 +6,92 @@ import { motion, AnimatePresence, useAnimate } from 'motion/react'
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string
   children: React.ReactNode
+  isLoading?: boolean
+  showSuccess?: boolean
 }
 
-export const Button = ({ className, children, ...props }: ButtonProps) => {
+export const Button = ({
+  className,
+  children,
+  isLoading,
+  showSuccess,
+  ...props
+}: ButtonProps) => {
   const [scope, animate] = useAnimate()
 
-  const animateLoading = async () => {
-    await animate(
-      '.loader',
-      {
-        width: '20px',
-        scale: 1,
-        display: 'block',
-      },
-      {
-        duration: 0.2,
-      }
-    )
-  }
+  // Handle external loading state
+  React.useEffect(() => {
+    if (isLoading) {
+      animate(
+        '.loader',
+        {
+          width: '20px',
+          scale: 1,
+          display: 'block',
+        },
+        {
+          duration: 0.2,
+        }
+      )
+      animate(
+        '.check',
+        {
+          width: '0px',
+          scale: 0,
+          display: 'none',
+        },
+        {
+          duration: 0.2,
+        }
+      )
+    } else {
+      animate(
+        '.loader',
+        {
+          width: '0px',
+          scale: 0,
+          display: 'none',
+        },
+        {
+          duration: 0.2,
+        }
+      )
+    }
+  }, [isLoading, animate])
 
-  const animateSuccess = async () => {
-    await animate(
-      '.loader',
-      {
-        width: '0px',
-        scale: 0,
-        display: 'none',
-      },
-      {
-        duration: 0.2,
-      }
-    )
-    await animate(
-      '.check',
-      {
-        width: '20px',
-        scale: 1,
-        display: 'block',
-      },
-      {
-        duration: 0.2,
-      }
-    )
+  // Handle external success state
+  React.useEffect(() => {
+    if (showSuccess) {
+      animate(
+        '.check',
+        {
+          width: '20px',
+          scale: 1,
+          display: 'block',
+        },
+        {
+          duration: 0.2,
+        }
+      )
 
-    await animate(
-      '.check',
-      {
-        width: '0px',
-        scale: 0,
-        display: 'none',
-      },
-      {
-        delay: 2,
-        duration: 0.2,
-      }
-    )
-  }
+      // Auto hide success after 2 seconds
+      const timer = setTimeout(() => {
+        animate(
+          '.check',
+          {
+            width: '0px',
+            scale: 0,
+            display: 'none',
+          },
+          {
+            duration: 0.2,
+          }
+        )
+      }, 2000)
 
-  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-    await animateLoading()
-    await props.onClick?.(event)
-    await animateSuccess()
-  }
+      return () => clearTimeout(timer)
+    }
+  }, [showSuccess, animate])
 
   const {
     onClick,
@@ -85,11 +109,12 @@ export const Button = ({ className, children, ...props }: ButtonProps) => {
       layoutId="button"
       ref={scope}
       className={cn(
-        'flex min-w-[120px] cursor-pointer items-center justify-center gap-2 rounded-full bg-green-500 px-4 py-2 font-medium text-white ring-offset-2 transition duration-200 hover:ring-2 hover:ring-green-500 dark:ring-offset-black',
+        'flex min-w-[120px] cursor-pointer items-center justify-center gap-2 rounded-md bg-black px-4 py-2 font-medium text-white ring-offset-2 transition duration-200 hover:ring-2 hover:ring-gray-600 dark:ring-offset-black disabled:opacity-50',
         className
       )}
       {...buttonProps}
-      onClick={handleClick}
+      onClick={onClick}
+      disabled={isLoading || buttonProps.disabled}
     >
       <motion.div layout className="flex items-center gap-2">
         <Loader />

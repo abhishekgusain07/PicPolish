@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { EditorState, ImageState, PlatformConfig } from '@/types/thumbnail'
+import { Button } from '@/components/ui/stateful-button'
 
 interface ImageDisplayProps {
   imageState: ImageState
@@ -15,13 +16,34 @@ export function ImageDisplay({
   config,
 }: ImageDisplayProps) {
   const [inputUrl, setInputUrl] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (inputUrl.trim()) {
-      await onImageFetch(inputUrl.trim())
+      setIsLoading(true)
+      setShowSuccess(false)
+      try {
+        await onImageFetch(inputUrl.trim())
+        // Success will be shown when imageState changes to loaded
+      } catch (error) {
+        console.error('Error fetching thumbnail:', error)
+      } finally {
+        setIsLoading(false)
+      }
     }
   }
+
+  // Show success when image loads successfully
+  useEffect(() => {
+    if (!imageState.isLoading && imageState.url && !imageState.error) {
+      setShowSuccess(true)
+      // Auto-hide success state after showing
+      const timer = setTimeout(() => setShowSuccess(false), 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [imageState.isLoading, imageState.url, imageState.error])
 
   const getImageContainerStyle = () => ({
     display: 'grid',
@@ -57,13 +79,14 @@ export function ImageDisplay({
               className="bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-800 text-gray-900 dark:text-gray-100 text-sm rounded-lg block w-full p-2.5 mb-4"
               required
             />
-            <button
+            <Button
               type="submit"
-              className="text-sm bg-[#121212] text-white font-semibold px-4 py-1 rounded-md hover:bg-[#2a2a2a] transition-colors"
+              isLoading={isLoading}
+              showSuccess={showSuccess}
               disabled={!inputUrl.trim()}
             >
               {config.buttonText}
-            </button>
+            </Button>
           </form>
         </div>
       </div>
