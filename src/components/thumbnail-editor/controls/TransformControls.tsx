@@ -213,7 +213,7 @@ export function TransformControls({
               )}
               style={{
                 background:
-                  'linear-gradient(135deg, #FF002C, #FF0057, #FF0082, #FF00AD, #FF00D8, #C100FF, #8900FF, #5900FF, #2400FF)',
+                  'linear-gradient(135deg, #FF002C, #FF0057, #FF0082,#FF00AD, #FF00D8, #C100FF, #8900FF, #5900FF, #2400FF)',
               }}
               onClick={() => handleTransform(index)}
             >

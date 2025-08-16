@@ -35,7 +35,7 @@ export default function ToolsPage() {
       <div className="mx-auto max-w-4xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
-            Tools Arsenal
+            PicPolish
           </h1>
           <p className="mt-2 text-gray-600 text-lg">
             A collection of simple, beautiful tools to make your content shine

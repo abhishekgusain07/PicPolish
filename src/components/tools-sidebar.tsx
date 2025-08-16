@@ -58,7 +58,7 @@ export const ToolsSidebar = () => {
               isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'
             )}
           >
-            <p className={cn('text-sm/6 text-stone-800 ')}>Beautify Tools</p>
+            <p className={cn('text-sm/6 text-stone-800 ')}>PicPolish</p>
           </div>
         </div>
       </SidebarHeader>

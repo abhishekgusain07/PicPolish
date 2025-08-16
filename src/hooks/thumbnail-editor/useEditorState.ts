@@ -29,7 +29,7 @@ interface EditorStateContext {
 const createInitialBackgroundState = (): BackgroundState => ({
   subActiveTab: 'Gradient',
   linearGradient:
-    'linear-gradient(135deg, rgb(255, 0, 44), rgb(255, 0, 87), rgb(255, 0, 130), rgb(255, 0, 173), rgb(255, 0, 216))',
+    'linear-gradient(135deg, rgb(72, 219, 251), rgb(108, 92, 231))',
   backgroundImage: 1,
   solidColor: PlainColors[0],
   selectedGradient: Gradients[0],

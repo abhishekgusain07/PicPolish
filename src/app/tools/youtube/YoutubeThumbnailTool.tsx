@@ -7,7 +7,7 @@ const youtubeConfig: PlatformConfig = {
   apiEndpoint: '/api/youtube',
   placeholderText: 'Paste youtube video URL here',
   defaultFileName: 'youtube_thumbnail_2348239234',
-  watermarkText: 'ToolsArsenal',
+  watermarkText: 'PicPolish',
   supportedFormats: ['png', 'jpeg', 'webp'],
   defaultFormat: 'png',
   inputLabel: 'Enter URL here',
