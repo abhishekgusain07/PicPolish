@@ -14,7 +14,6 @@ const youtubeConfig: PlatformConfig = {
   buttonText: 'Get thumbnail',
   validationRules: {
     urlPattern: /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)/,
-    requiredDomain: 'youtube',
   },
 }
 
