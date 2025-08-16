@@ -159,7 +159,7 @@ export function BackgroundSelector({
   return (
     <div className="space-y-4">
       {/* Sub-menu tabs */}
-      <div className="w-full flex flex-row items-center justify-center gap-1 rounded-2xl p-2 bg-slate-50/80 dark:bg-slate-700/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-600/50">
+      <div className="w-full flex flex-row items-center justify-center gap-1 rounded-2xl p-2 bg-slate-50/80 dark:bg-slate-700/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-600/50 overflow-hidden">
         <button
           className={cn(
             'flex-1 py-2 px-3 rounded-xl font-medium text-sm transition-all duration-200',
