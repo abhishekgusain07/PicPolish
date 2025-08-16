@@ -242,7 +242,7 @@ export function ScreenshotTool({ className }: ScreenshotToolProps) {
 
   return (
     <div
-      className={`min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 ${className || ''}`}
+      className={`min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 lg:p-6 ${className || ''}`}
     >
       {renderContent()}
     </div>

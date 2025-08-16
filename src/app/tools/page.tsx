@@ -32,7 +32,7 @@ const tools = [
 export default function ToolsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 px-6 py-12">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-4xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
             Tools Arsenal
@@ -44,7 +44,7 @@ export default function ToolsPage() {
         </div>
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {tools.map((tool, idx) => (
+          {tools.map((tool) => (
             <motion.div
               key={tool.name}
               whileHover={{ scale: 1.04 }}
