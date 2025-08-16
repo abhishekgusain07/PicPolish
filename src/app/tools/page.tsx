@@ -46,17 +46,21 @@ export default function ToolsPage() {
     <div className="relative z-10 min-h-screen">
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-4xl font-bold text-gray-900">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-2">
+                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
                   PicPolish Tools
                 </h1>
-                <DuolingoBadge variant="achievement" className="px-2" size="md">
-                  {toolStats.totalTools}
+                <DuolingoBadge
+                  variant="achievement"
+                  className="px-2 w-fit"
+                  size="md"
+                >
+                  {toolStats.totalTools} tools
                 </DuolingoBadge>
               </div>
-              <p className="text-lg text-gray-600 max-w-prose">
+              <p className="text-base sm:text-lg text-gray-600 max-w-prose">
                 A collection of powerful, beautiful tools to make your content
                 shine. Transform images, create stunning visuals, and access
                 premium design assets.
@@ -72,16 +76,28 @@ export default function ToolsPage() {
                 placeholder="Search tools..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors bg-white shadow-sm"
+                aria-label="Search tools"
+                className="w-full pl-10 pr-10 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors bg-white shadow-sm"
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  aria-label="Clear search"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  ✕
+                </button>
+              )}
             </div>
 
             <div className="flex gap-2">
               <div className="flex border-2 border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
                 <button
                   onClick={() => handleViewModeChange('grid')}
+                  aria-label="Grid view"
+                  aria-pressed={viewMode === 'grid'}
                   className={cn(
-                    'p-3 transition-colors',
+                    'p-3 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2',
                     viewMode === 'grid'
                       ? 'bg-indigo-100 text-indigo-600'
                       : 'text-gray-400 hover:text-gray-600'
@@ -91,8 +107,10 @@ export default function ToolsPage() {
                 </button>
                 <button
                   onClick={() => handleViewModeChange('list')}
+                  aria-label="List view"
+                  aria-pressed={viewMode === 'list'}
                   className={cn(
-                    'p-3 transition-colors',
+                    'p-3 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2',
                     viewMode === 'list'
                       ? 'bg-indigo-100 text-indigo-600'
                       : 'text-gray-400 hover:text-gray-600'
@@ -104,21 +122,41 @@ export default function ToolsPage() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-3 mb-6">
-            <DuolingoBadge variant="achievement" size="md">
-              ⭐ {toolStats.popularCount} Popular Tools
+          <div className="flex flex-wrap gap-2 sm:gap-3 mb-6">
+            <DuolingoBadge
+              variant="achievement"
+              size="md"
+              className="text-xs sm:text-sm"
+            >
+              ⭐ {toolStats.popularCount} Popular
             </DuolingoBadge>
-            <DuolingoBadge variant="streak" size="md">
-              🎨 {toolStats.totalAssets} Design Assets
+            <DuolingoBadge
+              variant="streak"
+              size="md"
+              className="text-xs sm:text-sm"
+            >
+              🎨 {toolStats.totalAssets} Assets
             </DuolingoBadge>
-            <DuolingoBadge variant="level" size="md">
-              📱 {toolStats.categoryCounts.social || 0} Social Tools
+            <DuolingoBadge
+              variant="level"
+              size="md"
+              className="text-xs sm:text-sm"
+            >
+              📱 {toolStats.categoryCounts.social || 0} Social
             </DuolingoBadge>
-            <DuolingoBadge variant="xp" size="md">
-              🖼️ {toolStats.categoryCounts.image || 0} Image Tools
+            <DuolingoBadge
+              variant="xp"
+              size="md"
+              className="text-xs sm:text-sm"
+            >
+              🖼️ {toolStats.categoryCounts.image || 0} Image
             </DuolingoBadge>
             {searchQuery && (
-              <DuolingoBadge variant="gray" size="md">
+              <DuolingoBadge
+                variant="gray"
+                size="md"
+                className="text-xs sm:text-sm"
+              >
                 🔍 {filteredTools.length} Found
               </DuolingoBadge>
             )}
@@ -144,7 +182,7 @@ export default function ToolsPage() {
             className={cn(
               'gap-2',
               viewMode === 'grid'
-                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'
                 : 'flex flex-col space-y-4'
             )}
           >
@@ -159,7 +197,7 @@ export default function ToolsPage() {
                 <Link
                   href={tool.href}
                   className={cn(
-                    'block h-full',
+                    'block h-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-2xl',
                     viewMode === 'list' ? 'w-full' : ''
                   )}
                 >
