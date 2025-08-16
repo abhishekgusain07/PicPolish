@@ -33,34 +33,6 @@ export function OverlaySelector({
 
   return (
     <div className="space-y-4">
-      {/* Overlay Title and Opacity Control */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wide">
-            Overlays
-          </h4>
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-600 dark:text-slate-400">
-              Opacity
-            </span>
-            <div className="flex items-center gap-2 min-w-[120px]">
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={overlayOpacity}
-                onChange={handleOpacitySliderChange}
-                className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
-              />
-              <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
-                {overlayOpacity.toFixed(1)}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Overlay Grid */}
       <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3 max-h-[20vh] md:max-h-[40vh] overflow-y-auto p-3 sm:p-4 bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/50 dark:border-slate-600/50">
         {/* None Option */}
@@ -126,6 +98,27 @@ export function OverlaySelector({
             </button>
           )
         })}
+      </div>
+
+      {/* Opacity Control */}
+      <div className="flex items-center justify-between px-4">
+        <span className="text-xs text-slate-600 dark:text-slate-400">
+          Opacity
+        </span>
+        <div className="flex items-center gap-2 min-w-[120px]">
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.1"
+            value={overlayOpacity}
+            onChange={handleOpacitySliderChange}
+            className="flex-1 h-2 rounded-full appearance-none bg-slate-200 dark:bg-slate-600 outline-none slider-thumb"
+          />
+          <span className="text-xs font-mono text-slate-500 dark:text-slate-400 w-8 text-right">
+            {overlayOpacity.toFixed(1)}
+          </span>
+        </div>
       </div>
 
       {/* Helper Text */}
