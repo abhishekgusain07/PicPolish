@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { Sketch } from '@uiw/react-color'
+import { createPortal } from 'react-dom'
+import { HexColorPicker } from 'react-colorful'
 import { cn } from '@/lib/utils'
 import { X, Check } from 'lucide-react'
 
@@ -21,14 +22,28 @@ export function ColorPickerModal({
   onSave,
 }: ColorPickerModalProps) {
   const [tempColor, setTempColor] = useState(color)
+  const [mounted, setMounted] = useState(false)
   const modalRef = useRef<HTMLDivElement>(null)
 
+  // Handle mounting for SSR
   useEffect(() => {
-    setTempColor(color)
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (color && color !== tempColor) {
+      console.log('Color prop changed:', color)
+      setTempColor(color)
+    }
   }, [color])
 
   useEffect(() => {
     if (isOpen) {
+      console.log('Modal opened with color:', tempColor, 'position:', position)
+
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden'
+
       const handleClickOutside = (event: MouseEvent) => {
         if (
           modalRef.current &&
@@ -48,36 +63,52 @@ export function ColorPickerModal({
       document.addEventListener('keydown', handleEscape)
 
       return () => {
+        document.body.style.overflow = ''
         document.removeEventListener('mousedown', handleClickOutside)
         document.removeEventListener('keydown', handleEscape)
       }
+    } else {
+      document.body.style.overflow = ''
     }
   }, [isOpen, onClose])
 
-  if (!isOpen) return null
-
   const handleColorChange = (newColor: string) => {
+    console.log('Color changed to:', newColor)
     setTempColor(newColor)
     onColorChange(newColor)
   }
 
   const handleSave = () => {
+    console.log('Saving color:', tempColor)
     onSave(tempColor)
     onClose()
   }
 
-  const modalStyle = {
-    left: Math.max(16, Math.min(position.x - 150, window.innerWidth - 300)),
-    top: Math.max(16, Math.min(position.y + 40, window.innerHeight - 500)),
+  // Don't render during SSR
+  if (!mounted || !isOpen) return null
+
+  // Calculate better positioning - center the modal
+  const modalStyle: React.CSSProperties = {
+    position: 'fixed',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    zIndex: 10000,
   }
 
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-start justify-start pointer-events-none">
-      <div className="fixed inset-0 bg-black/20 backdrop-blur-sm pointer-events-auto" />
+  const modalContent = (
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center">
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/30 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      {/* Modal */}
       <div
         ref={modalRef}
-        className="absolute bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50 p-4 min-w-[300px] pointer-events-auto"
-        style={modalStyle}
+        className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50 p-6 min-w-[320px] max-w-sm mx-4"
+        style={{ zIndex: 10001 }}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
@@ -95,17 +126,20 @@ export function ColorPickerModal({
         {/* Color Picker */}
         <div className="space-y-4">
           <div className="flex justify-center">
-            <Sketch
+            <HexColorPicker
               color={tempColor}
-              onChange={(color) => handleColorChange(color.hex)}
-              style={{ boxShadow: 'none' }}
+              onChange={handleColorChange}
+              style={{
+                width: '200px',
+                height: '150px',
+              }}
             />
           </div>
 
           {/* Color Preview and Input */}
           <div className="flex items-center gap-3">
             <div
-              className="w-8 h-8 rounded-lg border-2 border-slate-300 dark:border-slate-600 shadow-sm"
+              className="w-10 h-10 rounded-lg border-2 border-slate-300 dark:border-slate-600 shadow-sm flex-shrink-0"
               style={{ backgroundColor: tempColor }}
             />
             <input
@@ -152,4 +186,6 @@ export function ColorPickerModal({
       </div>
     </div>
   )
+
+  return createPortal(modalContent, document.body)
 }

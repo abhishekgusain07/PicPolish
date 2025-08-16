@@ -66,6 +66,73 @@ export function reconstructGradient(
 }
 
 /**
+ * Validate if a string is a valid hex color
+ * @param color - Color string to validate
+ * @returns True if valid hex color
+ */
+export function isValidHexColor(color: string): boolean {
+  return /^#[0-9A-F]{6}$/i.test(color)
+}
+
+/**
+ * Sanitize and validate hex color, return fallback if invalid
+ * @param color - Color string to sanitize
+ * @param fallback - Fallback color if invalid
+ * @returns Valid hex color
+ */
+export function sanitizeHexColor(
+  color: string,
+  fallback: string = '#000000'
+): string {
+  if (!color) return fallback
+
+  // Remove whitespace and ensure # prefix
+  let sanitized = color.trim()
+  if (!sanitized.startsWith('#')) {
+    sanitized = '#' + sanitized
+  }
+
+  // Expand 3-digit hex to 6-digit
+  if (sanitized.length === 4) {
+    sanitized =
+      '#' +
+      sanitized[1] +
+      sanitized[1] +
+      sanitized[2] +
+      sanitized[2] +
+      sanitized[3] +
+      sanitized[3]
+  }
+
+  return isValidHexColor(sanitized) ? sanitized : fallback
+}
+
+/**
+ * Extract hex colors from RGB values in a gradient with validation
+ * @param gradient - Gradient string
+ * @returns Array of valid hex color strings
+ */
+export function extractHexColorsWithValidation(gradient: string): string[] {
+  const rgbValues = extractRGBValues(gradient)
+  const hexColors = rgbValues.map(rgbToHex)
+
+  // Validate and sanitize each color
+  const validColors = hexColors.map((color) =>
+    sanitizeHexColor(color, '#000000')
+  )
+
+  // Ensure we have at least 2 colors for a gradient
+  if (validColors.length === 0) {
+    return ['#48dbfb', '#6c5ce7'] // Default blue gradient
+  }
+  if (validColors.length === 1) {
+    return [validColors[0], '#ffffff'] // Add white as second color
+  }
+
+  return validColors
+}
+
+/**
  * Update a specific color in the gradient colors array
  * @param colors - Current array of hex colors
  * @param index - Index to update
@@ -80,6 +147,6 @@ export function updateGradientColor(
   if (index < 0 || index >= colors.length) return colors
 
   const newColors = [...colors]
-  newColors[index] = newColor
+  newColors[index] = sanitizeHexColor(newColor, colors[index])
   return newColors
 }

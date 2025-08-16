@@ -10,9 +10,10 @@ import { Gradients } from '@/constants/gradient'
 import { PlainColors } from '@/constants/plainColors'
 import { ColorPickerModal } from '@/components/ui/color-picker-modal'
 import {
-  extractHexColors,
+  extractHexColorsWithValidation,
   reconstructGradient,
   updateGradientColor,
+  sanitizeHexColor,
 } from '@/lib/color-utils'
 
 export function BackgroundSelector({
@@ -25,12 +26,22 @@ export function BackgroundSelector({
     position: { x: 0, y: 0 },
   })
 
+  // Debug logging
+  console.log('BackgroundSelector render:', {
+    gradientColors: backgroundState.gradientColors,
+    selectedGradient: backgroundState.selectedGradient,
+    colorPickerState: colorPicker,
+  })
+
   const handleSubActiveTabChange = (tab: SubActiveTab) => {
     updateBackgroundState({ subActiveTab: tab })
   }
 
   const handleGradientChange = (gradient: string) => {
-    const colors = extractHexColors(gradient)
+    console.log('Gradient changed:', gradient)
+    const colors = extractHexColorsWithValidation(gradient)
+    console.log('Extracted colors:', colors)
+
     updateBackgroundState({
       selectedGradient: gradient,
       linearGradient: gradient,
@@ -42,11 +53,7 @@ export function BackgroundSelector({
     event.preventDefault()
     event.stopPropagation()
     const rect = event.currentTarget.getBoundingClientRect()
-    console.log('Color swatch clicked', {
-      index,
-      rect,
-      currentColors: backgroundState.gradientColors,
-    })
+
     setColorPicker({
       isOpen: true,
       colorIndex: index,
@@ -58,12 +65,25 @@ export function BackgroundSelector({
   }
 
   const handleColorChange = (newColor: string) => {
+    console.log(
+      'Color change requested:',
+      newColor,
+      'at index:',
+      colorPicker.colorIndex
+    )
+    const currentColors = backgroundState.gradientColors || [
+      '#48dbfb',
+      '#6c5ce7',
+    ]
+
     const updatedColors = updateGradientColor(
-      backgroundState.gradientColors,
+      currentColors,
       colorPicker.colorIndex,
       newColor
     )
     const newGradient = reconstructGradient(updatedColors)
+
+    console.log('Updated colors:', updatedColors, 'new gradient:', newGradient)
 
     updateBackgroundState({
       gradientColors: updatedColors,
@@ -73,12 +93,30 @@ export function BackgroundSelector({
   }
 
   const handleColorSave = (finalColor: string) => {
+    console.log(
+      'Color save requested:',
+      finalColor,
+      'at index:',
+      colorPicker.colorIndex
+    )
+    const currentColors = backgroundState.gradientColors || [
+      '#48dbfb',
+      '#6c5ce7',
+    ]
+
     const updatedColors = updateGradientColor(
-      backgroundState.gradientColors,
+      currentColors,
       colorPicker.colorIndex,
       finalColor
     )
     const newGradient = reconstructGradient(updatedColors)
+
+    console.log(
+      'Final colors saved:',
+      updatedColors,
+      'final gradient:',
+      newGradient
+    )
 
     updateBackgroundState({
       gradientColors: updatedColors,
@@ -149,7 +187,11 @@ export function BackgroundSelector({
         <div className="space-y-4">
           <Input type="Color" className="w-full h-10" />
           <div className="flex mt-3 gap-2">
-            {backgroundState.gradientColors?.map((color, index) => (
+            {(backgroundState.gradientColors &&
+            backgroundState.gradientColors.length > 0
+              ? backgroundState.gradientColors
+              : ['#48dbfb', '#6c5ce7']
+            ).map((color, index) => (
               <button
                 key={`${color}-${index}`}
                 onClick={(e) => handleColorSwatchClick(e, index)}
@@ -245,9 +287,12 @@ export function BackgroundSelector({
       {/* Color Picker Modal */}
       <ColorPickerModal
         isOpen={colorPicker.isOpen}
-        color={
-          backgroundState.gradientColors?.[colorPicker.colorIndex] || '#000000'
-        }
+        color={sanitizeHexColor(
+          (backgroundState.gradientColors || ['#48dbfb', '#6c5ce7'])[
+            colorPicker.colorIndex
+          ] || '#48dbfb',
+          '#48dbfb'
+        )}
         position={colorPicker.position}
         onColorChange={handleColorChange}
         onSave={handleColorSave}

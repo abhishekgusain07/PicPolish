@@ -16,7 +16,7 @@ import {
 } from '@/types/thumbnail'
 import { Gradients } from '@/constants/gradient'
 import { PlainColors } from '@/constants/plainColors'
-import { extractHexColors } from '@/lib/color-utils'
+import { extractHexColorsWithValidation } from '@/lib/color-utils'
 
 interface EditorStateContext {
   editorState: EditorState
@@ -30,7 +30,10 @@ interface EditorStateContext {
 const createInitialBackgroundState = (): BackgroundState => {
   const defaultGradient =
     'linear-gradient(135deg, rgb(72, 219, 251), rgb(108, 92, 231))'
-  const extractedColors = extractHexColors(defaultGradient)
+
+  // Use validation function to ensure we always have valid colors
+  const extractedColors = extractHexColorsWithValidation(defaultGradient)
+  console.log('Initial gradient colors extracted:', extractedColors)
 
   return {
     subActiveTab: 'Gradient',
@@ -40,8 +43,7 @@ const createInitialBackgroundState = (): BackgroundState => {
     selectedGradient: Gradients[0],
     selectedSolidColor: PlainColors[0],
     selectedImage: 1,
-    gradientColors:
-      extractedColors.length > 0 ? extractedColors : ['#48dbfb', '#6c5ce7'],
+    gradientColors: extractedColors,
   }
 }
 
