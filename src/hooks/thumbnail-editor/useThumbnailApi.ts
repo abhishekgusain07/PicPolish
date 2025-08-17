@@ -1,7 +1,6 @@
 import { useCallback } from 'react'
 import { toast } from 'sonner'
 import { PlatformConfig, ApiResponse } from '@/types/thumbnail'
-import { UsageService } from '@/lib/usage'
 
 interface UseThumbnailApiProps {
   config: PlatformConfig
@@ -124,9 +123,7 @@ export function useThumbnailApi({
           if (response.status === 403) {
             const errorData = await response.json()
             if (errorData.upgradeRequired) {
-              toast.error(
-                `You've reached your ${config.name} generation limit! Upgrade to continue.`
-              )
+              // Don't show toast error here - let the higher level component handle it
               updateImageState({
                 isLoading: false,
                 error: true,

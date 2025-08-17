@@ -8,6 +8,7 @@ import {
   DEFAULT_LOCAL_CONFIG,
   CaptureType,
 } from '@/types/thumbnail'
+import { useGenerationLimit } from '@/hooks/useGenerationLimit'
 import { ImageSourceSelector } from './components/ImageSourceSelector'
 import { ImagePreview } from './components/ImagePreview'
 import { LocalImageEditor } from './components/LocalImageEditor'
@@ -16,11 +17,7 @@ export function ScreenshotTool({ className }: ScreenshotToolProps) {
   const [screenshotState, setScreenshotState] = useState<ScreenshotState>(
     DEFAULT_SCREENSHOT_STATE
   )
-  const [usageInfo, setUsageInfo] = useState<{
-    canGenerate: boolean
-    plan: string
-    remaining: number
-  } | null>(null)
+  const { checkGenerationLimit, UpgradeModalComponent } = useGenerationLimit()
 
   // Helper function to create blob URL from file or blob
   const createBlobUrl = useCallback((file: File | Blob): string => {
@@ -34,58 +31,14 @@ export function ScreenshotTool({ className }: ScreenshotToolProps) {
     }
   }, [])
 
-  // Check usage before generation
-  const checkUsage = useCallback(async () => {
-    try {
-      const response = await fetch('/api/usage/screenshot')
-      if (response.ok) {
-        const data = await response.json()
-        setUsageInfo({
-          canGenerate: data.canGenerate,
-          plan: data.usage.plan,
-          remaining: data.usage.remaining,
-        })
-        return data.canGenerate
-      }
-      return false
-    } catch (error) {
-      console.error('Error checking usage:', error)
-      return false
-    }
-  }, [])
-
-  // Record generation after success
-  const recordGeneration = useCallback(async (metadata?: string) => {
-    try {
-      const response = await fetch('/api/usage/screenshot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ metadata }),
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setUsageInfo({
-          canGenerate: data.usage.remaining > 0 || data.usage.plan !== 'free',
-          plan: data.usage.plan,
-          remaining: data.usage.remaining,
-        })
-      }
-    } catch (error) {
-      console.error('Error recording generation:', error)
-    }
-  }, [])
-
   // Handle file upload from FileUpload component
   const handleFileUpload = useCallback(
     async (files: File[]) => {
       if (files.length === 0) return
 
-      // Check usage before processing
-      const canGenerate = await checkUsage()
+      // Check generation limit before processing
+      const canGenerate = await checkGenerationLimit('screenshot')
       if (!canGenerate) {
-        toast.error(
-          "You've reached your generation limit! Upgrade to continue."
-        )
         return
       }
 
@@ -123,17 +76,13 @@ export function ScreenshotTool({ className }: ScreenshotToolProps) {
         originalFile: file,
       })
 
-      // Record the generation
-      await recordGeneration(`upload:${file.name}`)
-
       toast.success('Image uploaded successfully!')
     },
     [
       screenshotState.imageUrl,
       cleanupBlobUrl,
       createBlobUrl,
-      checkUsage,
-      recordGeneration,
+      checkGenerationLimit,
     ]
   )
 
@@ -141,12 +90,9 @@ export function ScreenshotTool({ className }: ScreenshotToolProps) {
   const handleScreenCapture = useCallback(
     async (captureType: CaptureType) => {
       try {
-        // Check usage before processing
-        const canGenerate = await checkUsage()
+        // Check generation limit before processing
+        const canGenerate = await checkGenerationLimit('screenshot')
         if (!canGenerate) {
-          toast.error(
-            "You've reached your generation limit! Upgrade to continue."
-          )
           return
         }
 
@@ -220,9 +166,6 @@ export function ScreenshotTool({ className }: ScreenshotToolProps) {
               filename: `screenshot_${timestamp}`,
             })
 
-            // Record the generation
-            recordGeneration(`capture:${captureType}:${timestamp}`)
-
             toast.success('Screenshot captured successfully!')
 
             // Stop media stream
@@ -247,8 +190,7 @@ export function ScreenshotTool({ className }: ScreenshotToolProps) {
       screenshotState.imageUrl,
       cleanupBlobUrl,
       createBlobUrl,
-      checkUsage,
-      recordGeneration,
+      checkGenerationLimit,
     ]
   )
 
@@ -327,6 +269,9 @@ export function ScreenshotTool({ className }: ScreenshotToolProps) {
       className={`min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 lg:p-6 ${className || ''}`}
     >
       {renderContent()}
+
+      {/* Upgrade Modal */}
+      {UpgradeModalComponent}
     </div>
   )
 }

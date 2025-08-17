@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ThumbnailEditorProps } from '@/types/thumbnail'
 import { useEditorState, useThumbnailApi } from '@/hooks/thumbnail-editor'
+import { useGenerationLimit } from '@/hooks/useGenerationLimit'
 import { PreviewCard } from './PreviewCard'
 import { EditorCard } from './EditorCard'
 
@@ -28,6 +29,8 @@ export function ThumbnailEditorLayout({
     resetAll,
   } = useEditorState(config)
 
+  const { checkGenerationLimit, UpgradeModalComponent } = useGenerationLimit()
+
   const { fetchThumbnail, resetImage } = useThumbnailApi({
     config,
     updateImageState,
@@ -36,6 +39,21 @@ export function ThumbnailEditorLayout({
   const handleReset = () => {
     resetAll()
     resetImage()
+  }
+
+  // Enhanced fetch that checks generation limits first
+  const handleFetchThumbnail = async (inputUrl: string) => {
+    // Determine platform based on config name
+    const platform = config.name.toLowerCase() as 'twitter' | 'youtube'
+
+    // Check generation limit first
+    const canGenerate = await checkGenerationLimit(platform)
+
+    if (canGenerate) {
+      // If user can generate, proceed with normal fetch
+      return fetchThumbnail(inputUrl)
+    }
+    // If user cannot generate, the modal will be shown by checkGenerationLimit
   }
 
   return (
@@ -49,7 +67,7 @@ export function ThumbnailEditorLayout({
           watermarkState={watermarkState}
           imageState={imageState}
           filters={filters}
-          onImageFetch={fetchThumbnail}
+          onImageFetch={handleFetchThumbnail}
           onReset={handleReset}
           config={config}
         />
@@ -71,6 +89,9 @@ export function ThumbnailEditorLayout({
           config={config}
         />
       </div>
+
+      {/* Upgrade Modal */}
+      {UpgradeModalComponent}
     </div>
   )
 }
