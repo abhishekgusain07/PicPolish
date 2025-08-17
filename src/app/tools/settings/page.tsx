@@ -103,41 +103,43 @@ const Page = () => {
             </DuolingoBadge>
           </div>
 
-          {/* usage card */}
-          <div className="bg-white shadow-sm rounded-xl p-3 w-full">
-            <div className="flex flex-col justify-between text-sm mb-3">
-              <span className="font-medium text-gray-900">API Usage</span>
-              <span className="text-xs text-gray-400 mt-1">
-                This month&apos;s usage
-              </span>
-            </div>
-
-            <div className="w-full mb-3">
-              <Progress value={apiUsagePercentage} />
-            </div>
-            <div className="text-xs text-gray-400">
-              {planLimits.maxApiCalls === -1
-                ? `${usageData.apiCalls} API calls (unlimited)`
-                : `${usageData.apiCalls}/${planLimits.maxApiCalls} API calls remaining`}
-            </div>
-          </div>
-
           {/* generations usage card */}
           <div className="bg-white shadow-sm rounded-xl p-3 w-full">
             <div className="flex flex-col justify-between text-sm mb-3">
               <span className="font-medium text-gray-900">Generations</span>
               <span className="text-xs text-gray-400 mt-1">
-                Total generations used
+                {planLimits.maxGenerations === -1
+                  ? 'Usage statistics'
+                  : 'Total generations used'}
               </span>
             </div>
 
-            <div className="w-full mb-3">
-              <Progress value={generationsUsagePercentage} />
-            </div>
-            <div className="text-xs text-gray-400">
-              {planLimits.maxGenerations === -1
-                ? `${usageData.generations} generations (unlimited)`
-                : `${usageData.generations}/${planLimits.maxGenerations} generations remaining`}
+            {planLimits.maxGenerations !== -1 && (
+              <div className="w-full mb-3">
+                <Progress value={generationsUsagePercentage} />
+              </div>
+            )}
+
+            <div className="text-sm">
+              {planLimits.maxGenerations === -1 ? (
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Total generated:</span>
+                    <span className="font-medium">{usageData.generations}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Plan limit:</span>
+                    <span className="font-medium text-green-600">
+                      Unlimited
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-xs text-gray-400">
+                  {usageData.generations}/{planLimits.maxGenerations}{' '}
+                  generations remaining
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col items-center justify-center gap-2 mt-4">
