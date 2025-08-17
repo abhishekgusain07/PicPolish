@@ -2,6 +2,7 @@ import { ArchiveRestoreIcon } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { PreviewProps, EditorState } from '@/types/thumbnail'
 import { WatermarkOverlay } from '@/components/thumbnail-editor/preview/WatermarkOverlay'
+import { useAspectRatio } from '@/contexts/aspect-ratio-context'
 
 interface LocalImageDisplayProps {
   imageUrl: string
@@ -71,6 +72,7 @@ function LocalThumbnailPreview({
   onReset,
   config,
 }: PreviewProps) {
+  const { aspectRatioState } = useAspectRatio()
   const getBackgroundStyle = () => {
     switch (backgroundState.subActiveTab) {
       case 'Gradient':
@@ -98,7 +100,7 @@ function LocalThumbnailPreview({
     <div className="flex flex-col items-center justify-center p-6 w-full h-full min-h-[600px]">
       <div
         id="thumbnail-container"
-        className="rounded-2xl shadow-2xl max-w-[95%] sm:max-w-[85%] md:max-w-[75%] lg:max-w-[65%] transition-all duration-300"
+        className="rounded-2xl shadow-2xl transition-all duration-500 ease-in-out"
         style={{
           padding: getPaddingStyle(),
           margin: '0px',
@@ -111,6 +113,10 @@ function LocalThumbnailPreview({
           overflow: 'hidden',
           opacity: '1',
           scrollMargin: '0px',
+          width: `${aspectRatioState.containerDimensions.width}px`,
+          height: `${aspectRatioState.containerDimensions.height}px`,
+          maxWidth: '90vw',
+          maxHeight: '70vh',
         }}
       >
         <LocalImageDisplay

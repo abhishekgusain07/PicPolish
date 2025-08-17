@@ -1,12 +1,21 @@
+'use client'
 import React from 'react'
 import { FloatingDock } from '@/components/ui/floating-dock'
+import { AspectRatioMenu } from '@/components/ui/aspect-ratio-menu'
+import {
+  AspectRatioProvider,
+  useAspectRatio,
+} from '@/contexts/aspect-ratio-context'
 import { CopyIcon, RatioIcon, SaveIcon } from 'lucide-react'
 
 interface LayoutProps {
   children: React.ReactNode
 }
 
-const Layout = ({ children }: LayoutProps) => {
+function ToolsFloatingControls() {
+  const { aspectRatioState, toggleMenu, setCurrentRatio, closeMenu } =
+    useAspectRatio()
+
   const dockItems = [
     {
       title: 'Save',
@@ -27,17 +36,34 @@ const Layout = ({ children }: LayoutProps) => {
       icon: (
         <RatioIcon className="h-full w-full text-neutral-800 dark:text-neutral-300" />
       ),
-      href: '#',
+      onClick: toggleMenu,
     },
   ]
 
   return (
-    <div className="relative min-h-screen">
-      {children}
+    <>
       <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
         <FloatingDock items={dockItems} />
       </div>
-    </div>
+
+      <AspectRatioMenu
+        isOpen={aspectRatioState.isMenuOpen}
+        onClose={closeMenu}
+        onSelect={setCurrentRatio}
+        currentRatio={aspectRatioState.currentRatio}
+      />
+    </>
+  )
+}
+
+const Layout = ({ children }: LayoutProps) => {
+  return (
+    <AspectRatioProvider>
+      <div className="relative min-h-screen">
+        {children}
+        <ToolsFloatingControls />
+      </div>
+    </AspectRatioProvider>
   )
 }
 

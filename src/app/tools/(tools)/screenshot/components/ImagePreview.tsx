@@ -3,6 +3,7 @@ import { motion } from 'motion/react'
 import { Edit, RotateCcw, Download, Info } from 'lucide-react'
 import { ImagePreviewProps } from '@/types/thumbnail'
 import { cn } from '@/lib/utils'
+import { useAspectRatio } from '@/contexts/aspect-ratio-context'
 
 export function ImagePreview({
   imageUrl,
@@ -12,6 +13,7 @@ export function ImagePreview({
   onEdit,
   onRetake,
 }: ImagePreviewProps) {
+  const { aspectRatioState } = useAspectRatio()
   const formatFileSize = (bytes?: number) => {
     if (!bytes) return 'Unknown size'
     if (bytes < 1024) return `${bytes} B`
@@ -69,12 +71,19 @@ export function ImagePreview({
           animate={{ opacity: 1, scale: 1 }}
           className="flex-1 flex items-center justify-center"
         >
-          <div className="relative max-w-full max-h-[70vh] rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-slate-800">
+          <div
+            className="relative rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-slate-800 transition-all duration-500 ease-in-out"
+            style={{
+              width: `${aspectRatioState.containerDimensions.width}px`,
+              height: `${aspectRatioState.containerDimensions.height}px`,
+              maxWidth: '90vw',
+              maxHeight: '70vh',
+            }}
+          >
             <img
               src={imageUrl}
               alt={filename}
-              className="max-w-full max-h-full object-contain"
-              style={{ maxHeight: '70vh' }}
+              className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 ring-1 ring-black/10 dark:ring-white/10 rounded-2xl pointer-events-none" />
           </div>

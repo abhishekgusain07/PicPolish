@@ -3,6 +3,34 @@ export type SubActiveTab = 'Gradient' | 'Image' | 'Solid' | 'Overlay'
 export type WatermarkStyle = 'dark' | 'light' | 'glassy'
 export type ExportFormat = 'png' | 'jpeg' | 'svg' | 'webp'
 export type ExportQuality = '1' | '2' | '4' | '6' | '8'
+export type AspectRatioName =
+  | 'square'
+  | '16:9'
+  | '9:16'
+  | '4:3'
+  | '3:4'
+  | '3:2'
+  | '2:3'
+  | 'custom'
+
+export interface AspectRatio {
+  name: AspectRatioName
+  label: string
+  ratio: number
+  width: number
+  height: number
+}
+
+export interface AspectRatioState {
+  currentRatio: AspectRatio
+  isMenuOpen: boolean
+  containerDimensions: {
+    width: number
+    height: number
+    maxWidth: number
+    maxHeight: number
+  }
+}
 
 export interface ImageFilters {
   brightness: number
@@ -273,6 +301,53 @@ export const DEFAULT_SCREENSHOT_STATE: ScreenshotState = {
   imageBlob: null,
   imageUrl: null,
   filename: 'screenshot',
+}
+
+export const ASPECT_RATIOS: AspectRatio[] = [
+  { name: 'square', label: '1:1 Square', ratio: 1, width: 400, height: 400 },
+  {
+    name: '16:9',
+    label: '16:9 Landscape',
+    ratio: 16 / 9,
+    width: 640,
+    height: 360,
+  },
+  {
+    name: '9:16',
+    label: '9:16 Portrait',
+    ratio: 9 / 16,
+    width: 360,
+    height: 640,
+  },
+  {
+    name: '4:3',
+    label: '4:3 Landscape',
+    ratio: 4 / 3,
+    width: 480,
+    height: 360,
+  },
+  { name: '3:4', label: '3:4 Portrait', ratio: 3 / 4, width: 360, height: 480 },
+  {
+    name: '3:2',
+    label: '3:2 Landscape',
+    ratio: 3 / 2,
+    width: 540,
+    height: 360,
+  },
+  { name: '2:3', label: '2:3 Portrait', ratio: 2 / 3, width: 360, height: 540 },
+]
+
+export const DEFAULT_ASPECT_RATIO: AspectRatio = ASPECT_RATIOS[0] // Square
+
+export const DEFAULT_ASPECT_RATIO_STATE: AspectRatioState = {
+  currentRatio: DEFAULT_ASPECT_RATIO,
+  isMenuOpen: false,
+  containerDimensions: {
+    width: 400,
+    height: 400,
+    maxWidth: 800,
+    maxHeight: 600,
+  },
 }
 
 export const DEFAULT_LOCAL_CONFIG: LocalImageConfig = {
