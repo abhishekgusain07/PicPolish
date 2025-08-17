@@ -28,7 +28,7 @@ export function EditorSidebar({
           className={cn(
             'flex items-center gap-2 px-4 py-2.5 rounded-full transition-all duration-200 font-medium text-sm',
             activeTab === 'Settings'
-              ? 'bg-blue-500 text-white shadow-lg shadow-blue-200/50 dark:shadow-blue-900/50'
+              ? 'bg-black text-white shadow-lg shadow-black/20 dark:shadow-black/50'
               : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-600/50 hover:text-slate-800 dark:hover:text-slate-200'
           )}
           onClick={() => setActiveTab('Settings')}
@@ -50,7 +50,7 @@ export function EditorSidebar({
           className={cn(
             'px-4 py-2.5 rounded-full transition-all duration-200 font-medium text-sm',
             activeTab === 'Edit'
-              ? 'bg-blue-500 text-white shadow-lg shadow-blue-200/50 dark:shadow-blue-900/50'
+              ? 'bg-black text-white shadow-lg shadow-black/20 dark:shadow-black/50'
               : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-600/50 hover:text-slate-800 dark:hover:text-slate-200'
           )}
           onClick={() => setActiveTab('Edit')}
@@ -61,7 +61,7 @@ export function EditorSidebar({
           className={cn(
             'px-4 py-2.5 rounded-full transition-all duration-200 font-medium text-sm',
             activeTab === 'Background'
-              ? 'bg-blue-500 text-white shadow-lg shadow-blue-200/50 dark:shadow-blue-900/50'
+              ? 'bg-black text-white shadow-lg shadow-black/20 dark:shadow-black/50'
               : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-600/50 hover:text-slate-800 dark:hover:text-slate-200'
           )}
           onClick={() => setActiveTab('Background')}
