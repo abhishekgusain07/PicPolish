@@ -14,9 +14,16 @@ export async function handleCustomerCreated(
 
   const { data: customer } = payload
   try {
-    console.log('✅ Customer Created', customer)
+    console.log('✅ Customer Created Successfully', {
+      customerId: customer.id,
+      externalId: customer.externalId,
+      email: customer.email,
+    })
+
     // Additional customer processing logic can be added here
+    // For example, updating user preferences, sending welcome emails, etc.
   } catch (error) {
-    console.error('❌ Error processing customer creation:', error)
+    console.error('❌ Error processing customer creation webhook:', error)
+    // Don't throw - webhook should not fail even if post-processing fails
   }
 }

@@ -5,12 +5,21 @@ import { db } from '@/db'
 import { subscription } from '@/db/schema'
 import { getUserPlan, getPlanLimits, PRICING_PLANS } from '@/lib/plans'
 import { UsageService } from '@/lib/usage'
+import { createCustomerSafely } from '@/lib/polar/customer-service'
 import { createTRPCRouter, protectedProcedure } from '../init'
 
 export const billingRouter = createTRPCRouter({
   // Get current user's subscription and billing data
   getCurrentSubscription: protectedProcedure.query(async ({ ctx }) => {
     try {
+      // Ensure user has a Polar customer (create if needed)
+      try {
+        await createCustomerSafely(ctx.user.id, ctx.user.email, ctx.user.name)
+      } catch (error) {
+        console.error('❌ Failed to ensure Polar customer exists:', error)
+        // Continue even if customer creation fails
+      }
+
       // Fetch subscription from database
       const userSubscription = await db
         .select()
@@ -136,7 +145,7 @@ export const billingRouter = createTRPCRouter({
     }
   }),
 
-  // Open customer portal
+  // Open customer portal or redirect to checkout
   openCustomerPortal: protectedProcedure.mutation(async ({ ctx }) => {
     try {
       // Get user's subscription
@@ -149,12 +158,18 @@ export const billingRouter = createTRPCRouter({
         .then((rows) => rows[0] || null)
 
       if (!userSubscription) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'No active subscription found',
-        })
+        // No subscription found, redirect to checkout for upgrade
+        // Since createCustomerOnSignUp is now true, we redirect to checkout
+        const checkoutUrl = `/pricing?upgrade=true&plan=pro&userId=${ctx.user.id}`
+
+        return {
+          url: checkoutUrl,
+          success: true,
+          isCheckout: true,
+        }
       }
 
+      // User has subscription, create customer portal session with Polar
       // In a real implementation, you would create a customer portal session with Polar
       // For now, we'll return a placeholder URL
       const portalUrl = `https://polar.sh/customer-portal?customer_id=${userSubscription.polarId}`
@@ -162,6 +177,7 @@ export const billingRouter = createTRPCRouter({
       return {
         url: portalUrl,
         success: true,
+        isCheckout: false,
       }
     } catch (error) {
       console.error('Error opening customer portal:', error)

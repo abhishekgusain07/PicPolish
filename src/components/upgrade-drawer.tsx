@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import DuolingoButton from './ui/duolingo-button'
+import { checkout } from '@/lib/auth-client'
 
 const features = [
   'Unlimited thumbnail generations',
@@ -31,13 +32,28 @@ export const UpgradeDrawer = () => {
 
   const { mutate: handleSubscribe, isPending } =
     trpc.billing.openCustomerPortal.useMutation({
-      onSuccess: ({ url }) => {
+      onSuccess: async ({ url, isCheckout }) => {
         if (!url) {
           toast.error('No checkout session could be created')
           return
         }
+
         setIsOpen(false)
-        router.push(url)
+
+        if (isCheckout) {
+          // If this is a checkout flow (no existing subscription), use the checkout function
+          try {
+            await checkout({
+              slug: 'pro', // Default to pro plan
+            })
+          } catch (error: any) {
+            console.error('Checkout error:', error)
+            toast.error(error?.message || 'Failed to start checkout process')
+          }
+        } else {
+          // If user has subscription, redirect to customer portal
+          router.push(url)
+        }
       },
       onError: (error) => {
         toast.error(error.message || 'Failed to create checkout session')

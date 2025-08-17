@@ -10,6 +10,7 @@ import { handleSubscriptionCreated } from '@/lib/polar/subscription.created'
 import { handleSubscriptionUpdated } from '@/lib/polar/subscription.updated'
 import { handleSubscriptionCanceled } from '@/lib/polar/subscription.canceled'
 import { handleSubscriptionRevoked } from '@/lib/polar/subscription.revoked'
+import { createCustomerSafely } from '@/lib/polar/customer-service'
 
 const polarClient = new Polar({
   accessToken: env.POLAR_ACCESS_TOKEN,
