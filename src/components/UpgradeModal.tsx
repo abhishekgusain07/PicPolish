@@ -10,8 +10,7 @@ import {
 } from '@/components/ui/dialog'
 import { Progress } from '@/components/ui/progress'
 import DuolingoButton from '@/components/ui/duolingo-button'
-import { trpc } from '@/trpc/react'
-import { useRouter } from 'next/navigation'
+import { checkout } from '@/lib/auth-client'
 import { toast } from 'sonner'
 import { X, Sparkles, Zap, Crown, CheckCircle } from 'lucide-react'
 
@@ -39,7 +38,6 @@ export function UpgradeModal({
   maxGenerations = 5,
   feature = 'generations',
 }: UpgradeModalProps) {
-  const router = useRouter()
   const [isUpgrading, setIsUpgrading] = useState(false)
 
   const usagePercentage = Math.min(
@@ -47,22 +45,24 @@ export function UpgradeModal({
     100
   )
 
-  const { mutate: handleUpgrade } = trpc.billing.openCustomerPortal.useMutation(
-    {
-      onSuccess: ({ url }) => {
-        if (!url) {
-          toast.error('Unable to create checkout session')
-          return
-        }
-        setIsUpgrading(true)
-        router.push(url)
-      },
-      onError: (error) => {
-        toast.error(error.message || 'Failed to start upgrade process')
-        setIsUpgrading(false)
-      },
+  const handleUpgrade = async () => {
+    setIsUpgrading(true)
+    try {
+      const result = await checkout({
+        slug: 'pro', // Default to pro plan
+      })
+
+      if (!result) {
+        throw new Error('Checkout failed to initialize')
+      }
+
+      // Checkout function handles redirect automatically
+    } catch (error: any) {
+      console.error('Checkout error:', error)
+      toast.error(error?.message || 'Failed to start checkout process')
+      setIsUpgrading(false)
     }
-  )
+  }
 
   // Reset upgrading state when modal closes
   useEffect(() => {
@@ -175,7 +175,7 @@ export function UpgradeModal({
               <DuolingoButton
                 variant="primary"
                 size="md"
-                onClick={() => handleUpgrade()}
+                onClick={handleUpgrade}
                 disabled={isUpgrading}
                 loading={isUpgrading}
                 className="flex-1"
