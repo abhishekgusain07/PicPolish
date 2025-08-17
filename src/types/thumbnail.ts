@@ -4,6 +4,7 @@ export type WatermarkStyle = 'dark' | 'light' | 'glassy'
 export type ExportFormat = 'png' | 'jpeg' | 'svg' | 'webp'
 export type ExportQuality = '1' | '2' | '4' | '6' | '8'
 export type AspectRatioName =
+  | 'auto'
   | 'square'
   | '16:9'
   | '9:16'
@@ -11,6 +12,23 @@ export type AspectRatioName =
   | '3:4'
   | '3:2'
   | '2:3'
+  | '3:1'
+  | '1:3'
+  | '5:4'
+  | '4:5'
+  | '21:9'
+  | '9:21'
+  | '1.91:1'
+  | '1:1.91'
+  | '2:1'
+  | '1:2'
+  | '18.5:9'
+  | '9:18.5'
+  | '19.5:9'
+  | '9:19.5'
+  | '18:9'
+  | '5.3:4'
+  | '4:5.3'
   | 'custom'
 
 export interface AspectRatio {
@@ -304,40 +322,171 @@ export const DEFAULT_SCREENSHOT_STATE: ScreenshotState = {
 }
 
 export const ASPECT_RATIOS: AspectRatio[] = [
-  { name: 'square', label: '1:1 Square', ratio: 1, width: 400, height: 400 },
+  { name: 'auto', label: 'Auto', ratio: 1, width: 400, height: 400 },
+  {
+    name: 'square',
+    label: '1:1 Instagram Post (Square)',
+    ratio: 1,
+    width: 400,
+    height: 400,
+  },
+  {
+    name: '3:1',
+    label: '3:1 Twitter Header',
+    ratio: 3,
+    width: 600,
+    height: 200,
+  },
+  {
+    name: '4:3',
+    label: '4:3 Standard TV',
+    ratio: 4 / 3,
+    width: 480,
+    height: 360,
+  },
+  {
+    name: '3:4',
+    label: '3:4 Portrait TV',
+    ratio: 3 / 4,
+    width: 360,
+    height: 480,
+  },
+  {
+    name: '5:4',
+    label: '5:4 Classic Computer Monitor',
+    ratio: 5 / 4,
+    width: 500,
+    height: 400,
+  },
+  {
+    name: '4:5',
+    label: '4:5 Instagram Portrait',
+    ratio: 4 / 5,
+    width: 320,
+    height: 400,
+  },
   {
     name: '16:9',
-    label: '16:9 Landscape',
+    label: '16:9 Youtube Video',
     ratio: 16 / 9,
     width: 640,
     height: 360,
   },
   {
     name: '9:16',
-    label: '9:16 Portrait',
+    label: '9:16 Instagram Story',
     ratio: 9 / 16,
     width: 360,
     height: 640,
   },
   {
-    name: '4:3',
-    label: '4:3 Landscape',
-    ratio: 4 / 3,
-    width: 480,
-    height: 360,
+    name: '21:9',
+    label: '21:9 Ultrawide Monitor',
+    ratio: 21 / 9,
+    width: 700,
+    height: 300,
   },
-  { name: '3:4', label: '3:4 Portrait', ratio: 3 / 4, width: 360, height: 480 },
+  {
+    name: '9:21',
+    label: '9:21 Ultrawide Portrait',
+    ratio: 9 / 21,
+    width: 300,
+    height: 700,
+  },
   {
     name: '3:2',
-    label: '3:2 Landscape',
+    label: '3:2 Classic Film Camera',
     ratio: 3 / 2,
     width: 540,
     height: 360,
   },
-  { name: '2:3', label: '2:3 Portrait', ratio: 2 / 3, width: 360, height: 540 },
+  {
+    name: '2:3',
+    label: '2:3 Portrait Film Camera',
+    ratio: 2 / 3,
+    width: 360,
+    height: 540,
+  },
+  {
+    name: '2:1',
+    label: '2:1 Panoramic Landscape',
+    ratio: 2,
+    width: 600,
+    height: 300,
+  },
+  {
+    name: '1:2',
+    label: '1:2 Panoramic Portrait',
+    ratio: 1 / 2,
+    width: 300,
+    height: 600,
+  },
+  {
+    name: '1.91:1',
+    label: '1.91:1 Facebook Link Preview',
+    ratio: 1.91,
+    width: 573,
+    height: 300,
+  },
+  {
+    name: '1:1.91',
+    label: '1:1.91 Facebook Link Preview (Portrait)',
+    ratio: 1 / 1.91,
+    width: 300,
+    height: 573,
+  },
+  {
+    name: '5.3:4',
+    label: '5.3:4 iPhone Photo (Portrait)',
+    ratio: 5.3 / 4,
+    width: 400,
+    height: 302,
+  },
+  {
+    name: '4:5.3',
+    label: '4:5.3 iPhone Photo',
+    ratio: 4 / 5.3,
+    width: 302,
+    height: 400,
+  },
+  {
+    name: '18.5:9',
+    label: '18.5:9 Samsung Galaxy S8/S9',
+    ratio: 18.5 / 9,
+    width: 617,
+    height: 300,
+  },
+  {
+    name: '9:18.5',
+    label: '9:18.5 Samsung Galaxy S8/S9 (Portrait)',
+    ratio: 9 / 18.5,
+    width: 300,
+    height: 617,
+  },
+  {
+    name: '19.5:9',
+    label: '19.5:9 iPhone X/XS/XR',
+    ratio: 19.5 / 9,
+    width: 650,
+    height: 300,
+  },
+  {
+    name: '9:19.5',
+    label: '9:19.5 iPhone X/XS/XR (Portrait)',
+    ratio: 9 / 19.5,
+    width: 300,
+    height: 650,
+  },
+  {
+    name: '18:9',
+    label: '18:9 Google Pixel XL2/XL3',
+    ratio: 18 / 9,
+    width: 600,
+    height: 300,
+  },
 ]
 
-export const DEFAULT_ASPECT_RATIO: AspectRatio = ASPECT_RATIOS[0] // Square
+export const DEFAULT_ASPECT_RATIO: AspectRatio = ASPECT_RATIOS[0] // Auto
 
 export const DEFAULT_ASPECT_RATIO_STATE: AspectRatioState = {
   currentRatio: DEFAULT_ASPECT_RATIO,
