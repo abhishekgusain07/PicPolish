@@ -67,17 +67,24 @@ const Page = () => {
     users: 1,
     projects: 0,
     apiCalls: 0,
+    generations: 0,
   }
   const planLimits = subscription?.planLimits || {
     maxUsers: 1,
     maxProjects: 3,
     maxApiCalls: 100,
+    maxGenerations: 5,
   }
 
   const apiUsagePercentage =
     planLimits.maxApiCalls === -1
       ? 0
       : (usageData.apiCalls / planLimits.maxApiCalls) * 100
+
+  const generationsUsagePercentage =
+    planLimits.maxGenerations === -1
+      ? 0
+      : (usageData.generations / planLimits.maxGenerations) * 100
 
   return (
     <div className="relative w-full max-w-md mx-auto mt-12">
@@ -112,6 +119,25 @@ const Page = () => {
               {planLimits.maxApiCalls === -1
                 ? `${usageData.apiCalls} API calls (unlimited)`
                 : `${usageData.apiCalls}/${planLimits.maxApiCalls} API calls remaining`}
+            </div>
+          </div>
+
+          {/* generations usage card */}
+          <div className="bg-white shadow-sm rounded-xl p-3 w-full">
+            <div className="flex flex-col justify-between text-sm mb-3">
+              <span className="font-medium text-gray-900">Generations</span>
+              <span className="text-xs text-gray-400 mt-1">
+                Total generations used
+              </span>
+            </div>
+
+            <div className="w-full mb-3">
+              <Progress value={generationsUsagePercentage} />
+            </div>
+            <div className="text-xs text-gray-400">
+              {planLimits.maxGenerations === -1
+                ? `${usageData.generations} generations (unlimited)`
+                : `${usageData.generations}/${planLimits.maxGenerations} generations remaining`}
             </div>
 
             <div className="flex flex-col items-center justify-center gap-2 mt-4">

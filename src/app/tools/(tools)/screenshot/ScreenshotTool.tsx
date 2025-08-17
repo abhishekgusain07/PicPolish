@@ -330,3 +330,10 @@ export function ScreenshotTool({ className }: ScreenshotToolProps) {
     </div>
   )
 }
+
+// ⏺ Update Todos
+//   ⎿  ☒ Phase 1: Database schema changes - Add generations table and free plan
+//      ☐ Phase 2: Usage tracking system - Modify API routes and hooks
+//      ☐ Phase 3: tRPC integration - Create usage router and update billing
+//      ☐ Phase 4: Enforcement layer - Add generation limits and validation
+//      ☐ Phase 5: UI/UX enhancements - Usage indicators and upgrade modals

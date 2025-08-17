@@ -21,6 +21,7 @@ import {
   FolderOpen,
   Zap,
   Loader2,
+  Image,
 } from 'lucide-react'
 import { trpc } from '@/trpc/react'
 
@@ -158,8 +159,9 @@ export function BillingPageClient({
       },
     },
     currentPricingPlan = null,
-    currentUsage = { users: 1, projects: 0, apiCalls: 0 },
-    usagePercentages = { users: 0, projects: 0, apiCalls: 0 },
+    currentUsage = { users: 1, projects: 0, apiCalls: 0, generations: 0 },
+    usagePercentages = { users: 0, projects: 0, apiCalls: 0, generations: 0 },
+    generationsByPlatform = { screenshot: 0, twitter: 0, youtube: 0 },
   } = billingData
 
   // Add safety check for essential data
@@ -317,6 +319,36 @@ export function BillingPageClient({
                   <Progress value={usagePercentages.apiCalls} className="h-2" />
                 )}
                 <div className="text-xs text-gray-500">This month</div>
+              </div>
+
+              {/* Generations */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Image
+                      className="w-4 h-4 text-gray-400"
+                      aria-label="Generations"
+                    />
+                    <span className="font-medium">Generations</span>
+                  </div>
+                  <span className="text-sm text-gray-600">
+                    {currentUsage.generations} /{' '}
+                    {planLimits.maxGenerations === -1
+                      ? '∞'
+                      : planLimits.maxGenerations}
+                  </span>
+                </div>
+                {planLimits.maxGenerations !== -1 && (
+                  <Progress
+                    value={usagePercentages.generations}
+                    className="h-2"
+                  />
+                )}
+                <div className="text-xs text-gray-500">
+                  Screenshot: {generationsByPlatform.screenshot}, Twitter:{' '}
+                  {generationsByPlatform.twitter}, YouTube:{' '}
+                  {generationsByPlatform.youtube}
+                </div>
               </div>
             </div>
           </CardContent>
