@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { EditorState, ImageState, PlatformConfig } from '@/types/thumbnail'
 import { Button } from '@/components/ui/stateful-button'
 import TweetPage from '@/app/tools/(tools)/twitter/tweet'
+import { useAspectRatioStore } from '@/stores/aspect-ratio-store'
 
 interface ImageDisplayProps {
   imageState: ImageState
@@ -16,9 +17,20 @@ export function ImageDisplay({
   onImageFetch,
   config,
 }: ImageDisplayProps) {
+  const { containerDimensions } = useAspectRatioStore()
   const [inputUrl, setInputUrl] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+
+  const getFormWidth = () => {
+    const containerWidth = containerDimensions.width
+    // Use 85% of container width, with min/max bounds for usability
+    const calculatedWidth = Math.max(
+      Math.min(containerWidth * 0.85, 500), // Max 500px
+      Math.min(containerWidth - 60, 280) // Min 280px, accounting for padding
+    )
+    return `${calculatedWidth}px`
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -66,7 +78,10 @@ export function ImageDisplay({
   if (imageState.isLoading) {
     return (
       <div style={getImageContainerStyle()}>
-        <div className="bg-white dark:bg-black p-6 rounded-lg min-w-[400px] max-w-[500px]">
+        <div
+          className="bg-white dark:bg-black p-6 rounded-lg"
+          style={{ width: getFormWidth() }}
+        >
           <label
             htmlFor="url-input"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -101,7 +116,10 @@ export function ImageDisplay({
   if (imageState.error) {
     return (
       <div style={getImageContainerStyle()}>
-        <div className="bg-white dark:bg-black p-6 rounded-lg min-w-[400px] max-w-[500px] text-center">
+        <div
+          className="bg-white dark:bg-black p-6 rounded-lg text-center"
+          style={{ width: getFormWidth() }}
+        >
           <div className="text-red-500 mb-4">
             <svg
               className="w-12 h-12 mx-auto mb-2"
