@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { EditorState, ImageState, PlatformConfig } from '@/types/thumbnail'
 import { Button } from '@/components/ui/stateful-button'
-import TweetPage from '@/app/tools/twitter/tweet'
+import TweetPage from '@/app/tools/(tools)/twitter/tweet'
 
 interface ImageDisplayProps {
   imageState: ImageState

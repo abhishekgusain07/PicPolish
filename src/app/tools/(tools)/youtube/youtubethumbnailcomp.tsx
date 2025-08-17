@@ -10,7 +10,7 @@ import { PlainColors } from '@/constants/plainColors'
 import { Transform } from '@/constants/transform'
 import { Position } from '@/constants/constant'
 import { toast } from 'sonner'
-import { useConfirm } from '../../../../hooks/use-confirm'
+import { useConfirm } from '../../../../../hooks/use-confirm'
 import { ArchiveRestoreIcon } from 'lucide-react'
 import { Joystick } from 'react-joystick-component'
 
