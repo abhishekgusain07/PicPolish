@@ -76,24 +76,22 @@ export function AspectRatioMenu({
     return { width, height }
   }
 
-  console.log('AspectRatioMenu - isOpen:', isOpen)
-
   if (!isOpen) return null
 
   return (
     <div
       ref={menuRef}
       className={cn(
-        'fixed bottom-20 left-1/2 transform -translate-x-1/2 z-[9999]',
+        'fixed bottom-24 left-1/2 transform -translate-x-1/2 z-[9999]',
         'bg-white dark:bg-neutral-900',
-        'border-2 border-red-500', // Temporary red border to see it
+        'border border-slate-200 dark:border-slate-700',
         'rounded-2xl shadow-2xl p-4',
         'min-w-[280px] max-w-[320px]',
         className
       )}
       style={{
         position: 'fixed',
-        bottom: '80px',
+        bottom: '96px', // Above floating dock (64px height + 16px bottom + 16px spacing)
         left: '50%',
         transform: 'translateX(-50%)',
         zIndex: 9999,

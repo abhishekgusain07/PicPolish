@@ -3,7 +3,7 @@ import { motion } from 'motion/react'
 import { Edit, RotateCcw, Download, Info } from 'lucide-react'
 import { ImagePreviewProps } from '@/types/thumbnail'
 import { cn } from '@/lib/utils'
-import { useAspectRatio } from '@/contexts/aspect-ratio-context'
+import { useAspectRatioStore } from '@/stores/aspect-ratio-store'
 
 export function ImagePreview({
   imageUrl,
@@ -13,7 +13,7 @@ export function ImagePreview({
   onEdit,
   onRetake,
 }: ImagePreviewProps) {
-  const { aspectRatioState } = useAspectRatio()
+  const { containerDimensions } = useAspectRatioStore()
   const formatFileSize = (bytes?: number) => {
     if (!bytes) return 'Unknown size'
     if (bytes < 1024) return `${bytes} B`
@@ -74,8 +74,8 @@ export function ImagePreview({
           <div
             className="relative rounded-2xl overflow-hidden shadow-2xl bg-white dark:bg-slate-800 transition-all duration-500 ease-in-out"
             style={{
-              width: `${aspectRatioState.containerDimensions.width}px`,
-              height: `${aspectRatioState.containerDimensions.height}px`,
+              width: `${containerDimensions.width}px`,
+              height: `${containerDimensions.height}px`,
               maxWidth: '90vw',
               maxHeight: '70vh',
             }}

@@ -3,6 +3,7 @@ import { PreviewProps } from '@/types/thumbnail'
 import { ImageDisplay } from './ImageDisplay'
 import { WatermarkOverlay } from './WatermarkOverlay'
 import { OverlayLayer } from './OverlayLayer'
+import { useAspectRatioStore } from '@/stores/aspect-ratio-store'
 
 export function ThumbnailPreview({
   editorState,
@@ -14,6 +15,7 @@ export function ThumbnailPreview({
   onReset,
   config,
 }: PreviewProps) {
+  const { containerDimensions } = useAspectRatioStore()
   const getBackgroundStyle = () => {
     switch (backgroundState.subActiveTab) {
       case 'Gradient':
@@ -41,7 +43,7 @@ export function ThumbnailPreview({
     <div className="flex flex-col items-center justify-center p-6 w-full h-full min-h-[600px]">
       <div
         id="thumbnail-container"
-        className="rounded-2xl shadow-2xl max-w-[95%] sm:max-w-[85%] md:max-w-[75%] lg:max-w-[65%] transition-all duration-300"
+        className="rounded-2xl shadow-2xl transition-all duration-500 ease-in-out"
         style={{
           padding: getPaddingStyle(),
           margin: '0px',
@@ -54,6 +56,10 @@ export function ThumbnailPreview({
           overflow: 'hidden',
           opacity: '1',
           scrollMargin: '0px',
+          width: `${containerDimensions.width}px`,
+          height: `${containerDimensions.height}px`,
+          maxWidth: '90vw',
+          maxHeight: '70vh',
         }}
       >
         <ImageDisplay

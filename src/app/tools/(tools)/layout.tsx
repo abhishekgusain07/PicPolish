@@ -2,10 +2,7 @@
 import React from 'react'
 import { FloatingDock } from '@/components/ui/floating-dock'
 import { AspectRatioMenu } from '@/components/ui/aspect-ratio-menu'
-import {
-  AspectRatioProvider,
-  useAspectRatio,
-} from '@/contexts/aspect-ratio-context'
+import { useAspectRatioStore } from '@/stores/aspect-ratio-store'
 import { CopyIcon, RatioIcon, SaveIcon } from 'lucide-react'
 
 interface LayoutProps {
@@ -13,8 +10,8 @@ interface LayoutProps {
 }
 
 function ToolsFloatingControls() {
-  const { aspectRatioState, toggleMenu, setCurrentRatio, closeMenu } =
-    useAspectRatio()
+  const { isMenuOpen, currentRatio, toggleMenu, setCurrentRatio, closeMenu } =
+    useAspectRatioStore()
 
   const dockItems = [
     {
@@ -47,10 +44,10 @@ function ToolsFloatingControls() {
       </div>
 
       <AspectRatioMenu
-        isOpen={aspectRatioState.isMenuOpen}
+        isOpen={isMenuOpen}
         onClose={closeMenu}
         onSelect={setCurrentRatio}
-        currentRatio={aspectRatioState.currentRatio}
+        currentRatio={currentRatio}
       />
     </>
   )
@@ -58,12 +55,10 @@ function ToolsFloatingControls() {
 
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <AspectRatioProvider>
-      <div className="relative min-h-screen">
-        {children}
-        <ToolsFloatingControls />
-      </div>
-    </AspectRatioProvider>
+    <div className="relative min-h-screen">
+      {children}
+      <ToolsFloatingControls />
+    </div>
   )
 }
 
