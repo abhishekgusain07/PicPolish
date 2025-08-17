@@ -4,6 +4,7 @@ import { eq, desc } from 'drizzle-orm'
 import { db } from '@/db'
 import { subscription } from '@/db/schema'
 import { getUserPlan, getPlanLimits, PRICING_PLANS } from '@/lib/plans'
+import { UsageService } from '@/lib/usage'
 import { createTRPCRouter, protectedProcedure } from '../init'
 
 export const billingRouter = createTRPCRouter({
@@ -23,11 +24,18 @@ export const billingRouter = createTRPCRouter({
       const currentPlan = getUserPlan(userSubscription)
       const planLimits = getPlanLimits(currentPlan)
 
-      // Mock usage data - in real app, this would come from usage tracking
+      // Real usage data from usage tracking
+      const totalGenerations = await UsageService.getUserGenerationCount(
+        ctx.user.id
+      )
+      const generationsByPlatform =
+        await UsageService.getUserGenerationsByPlatform(ctx.user.id)
+
       const currentUsage = {
         users: 1,
         projects: 0,
         apiCalls: 0,
+        generations: totalGenerations,
       }
 
       const usagePercentages = {
@@ -43,6 +51,10 @@ export const billingRouter = createTRPCRouter({
           planLimits.maxApiCalls === -1
             ? 0
             : (currentUsage.apiCalls / planLimits.maxApiCalls) * 100,
+        generations:
+          planLimits.maxGenerations === -1
+            ? 0
+            : (currentUsage.generations / planLimits.maxGenerations) * 100,
       }
 
       // Ensure we always return valid data
@@ -67,6 +79,7 @@ export const billingRouter = createTRPCRouter({
           : null,
         currentUsage,
         usagePercentages,
+        generationsByPlatform,
       }
 
       console.log('📊 Billing data retrieved:', {
@@ -92,12 +105,19 @@ export const billingRouter = createTRPCRouter({
   // Get usage statistics
   getUsageStats: protectedProcedure.query(async ({ ctx }) => {
     try {
-      // This would typically fetch from your usage tracking system
-      // For now, returning mock data
+      // Real usage data from usage tracking
+      const totalGenerations = await UsageService.getUserGenerationCount(
+        ctx.user.id
+      )
+      const generationsByPlatform =
+        await UsageService.getUserGenerationsByPlatform(ctx.user.id)
+
       return {
         users: 1,
         projects: 0,
         apiCalls: 0,
+        generations: totalGenerations,
+        generationsByPlatform,
         period: {
           start: new Date(
             new Date().getFullYear(),
