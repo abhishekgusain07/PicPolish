@@ -8,23 +8,28 @@ import { authClient } from '@/lib/auth-client'
 import { trpc } from '@/trpc/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 
 const Page = () => {
   const router = useRouter()
   const { data } = authClient.useSession()
+  const queryClient = useQueryClient()
 
   const searchParams = useSearchParams()
   const status = searchParams.get('s')
 
   const handleLogout = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push('/')
-        },
-      },
-    })
+    try {
+      await authClient.signOut()
+      // Clear all queries and cache
+      queryClient.clear()
+      // Navigate to home and force a reload
+      router.push('/')
+      setTimeout(() => window.location.reload(), 100)
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
   }
 
   const { data: subscription } = trpc.billing.getCurrentSubscription.useQuery()

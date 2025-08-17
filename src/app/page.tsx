@@ -2,10 +2,24 @@
 import { Button } from '@/components/ui/button'
 import { signOut } from '@/lib/auth-client'
 import { useSessionContext } from '@/components/session-provider'
+import { useQueryClient } from '@tanstack/react-query'
 import Link from 'next/link'
 
 export default function Home() {
   const { session } = useSessionContext()
+  const queryClient = useQueryClient()
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+      // Clear all queries and force a refresh
+      queryClient.clear()
+      // Force a page reload to ensure clean state
+      window.location.reload()
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
       <div className="max-w-2xl w-full text-center space-y-8">
@@ -39,7 +53,7 @@ export default function Home() {
                   Dashboard
                 </Button>
               </Link>
-              <Button onClick={() => signOut()} size="lg" variant="outline">
+              <Button onClick={handleLogout} size="lg" variant="outline">
                 Logout
               </Button>
             </div>

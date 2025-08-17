@@ -40,6 +40,11 @@ export function SessionProvider({
     if (initialSession && !session && !isLoading) {
       queryClient.setQueryData(['session'], initialSession)
     }
+
+    // If session becomes null, ensure we clear any cached session data
+    if (!session && !isLoading) {
+      queryClient.removeQueries({ queryKey: ['session'] })
+    }
   }, [initialSession, session, isLoading, queryClient])
 
   return (
