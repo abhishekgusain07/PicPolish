@@ -42,6 +42,7 @@ export interface AspectRatio {
 export interface AspectRatioState {
   currentRatio: AspectRatio
   isMenuOpen: boolean
+  containerScale: number
   containerDimensions: {
     width: number
     height: number
@@ -491,6 +492,7 @@ export const DEFAULT_ASPECT_RATIO: AspectRatio = ASPECT_RATIOS[0] // Auto
 export const DEFAULT_ASPECT_RATIO_STATE: AspectRatioState = {
   currentRatio: DEFAULT_ASPECT_RATIO,
   isMenuOpen: false,
+  containerScale: 1.0,
   containerDimensions: {
     width: 400,
     height: 400,

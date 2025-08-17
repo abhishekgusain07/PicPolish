@@ -1,4 +1,5 @@
 import { TransformControls } from '../controls/TransformControls'
+import { ContainerSizeControl } from '../controls/ContainerSizeControl'
 import { EditorState } from '@/types/thumbnail'
 
 interface EditTabProps {
@@ -55,6 +56,9 @@ export function EditTab({ editorState, updateEditorState }: EditTabProps) {
         imageShadow={editorState.imageShadow}
         setImageShadow={(shadow) => updateEditorState({ imageShadow: shadow })}
       />
+
+      {/* Container Size Control */}
+      <ContainerSizeControl />
 
       {/* Frame & Effects */}
       <div className="space-y-4">
