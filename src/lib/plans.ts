@@ -1,9 +1,10 @@
-export type PlanType = 'starter' | 'pro' | 'enterprise'
+export type PlanType = 'free' | 'starter' | 'pro' | 'enterprise'
 
 export interface PlanLimits {
   maxUsers: number
   maxProjects: number
   maxApiCalls: number
+  maxGenerations: number
   features: {
     prioritySupport: boolean
     advancedAnalytics: boolean
@@ -13,10 +14,23 @@ export interface PlanLimits {
 }
 
 export const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
+  free: {
+    maxUsers: 1,
+    maxProjects: 1,
+    maxApiCalls: 100,
+    maxGenerations: 5,
+    features: {
+      prioritySupport: false,
+      advancedAnalytics: false,
+      teamCollaboration: false,
+      customIntegrations: false,
+    },
+  },
   starter: {
     maxUsers: 1,
     maxProjects: 10,
     maxApiCalls: 5000,
+    maxGenerations: -1,
     features: {
       prioritySupport: false,
       advancedAnalytics: true,
@@ -28,6 +42,7 @@ export const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
     maxUsers: 5,
     maxProjects: 25,
     maxApiCalls: 10000,
+    maxGenerations: -1,
     features: {
       prioritySupport: true,
       advancedAnalytics: true,
@@ -39,6 +54,7 @@ export const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
     maxUsers: -1, // unlimited
     maxProjects: -1, // unlimited
     maxApiCalls: -1, // unlimited
+    maxGenerations: -1, // unlimited
     features: {
       prioritySupport: true,
       advancedAnalytics: true,
@@ -61,6 +77,20 @@ export interface PricingPlan {
 
 export const PRICING_PLANS: PricingPlan[] = [
   {
+    title: 'Free',
+    description: 'Get started with basic features',
+    price: {
+      monthly: '$0',
+      yearly: '$0',
+    },
+    features: [
+      '5 generations total',
+      'All thumbnail tools',
+      'Basic exports',
+      'Community support',
+    ],
+  },
+  {
     title: 'Starter',
     description: 'Perfect for personal projects',
     price: {
@@ -71,6 +101,7 @@ export const PRICING_PLANS: PricingPlan[] = [
       '1 user',
       '10 projects',
       '5,000 API calls/month',
+      'Unlimited generations',
       'Advanced analytics',
     ],
   },
@@ -85,6 +116,7 @@ export const PRICING_PLANS: PricingPlan[] = [
       'Up to 5 users',
       '25 projects',
       '10,000 API calls/month',
+      'Unlimited generations',
       'Priority support',
       'Advanced analytics',
     ],
@@ -101,6 +133,7 @@ export const PRICING_PLANS: PricingPlan[] = [
       'Unlimited users',
       'Unlimited projects',
       'Unlimited API calls',
+      'Unlimited generations',
       'Priority support',
       'Advanced analytics',
       'Team collaboration',
@@ -114,27 +147,27 @@ export const PRICING_PLANS: PricingPlan[] = [
  */
 export function getUserPlan(
   subscription?: { plan: string; status: string } | null
-): PlanType | null {
+): PlanType {
   if (!subscription?.plan || subscription?.status !== 'active') {
-    return null
+    return 'free'
   }
 
   const plan = subscription.plan.toLowerCase()
+  if (plan === 'free') return 'free'
   if (plan === 'starter') return 'starter'
   if (plan === 'pro') return 'pro'
   if (plan === 'enterprise') return 'enterprise'
 
-  return null
+  return 'free'
 }
 
 /**
  * Check if a user can perform a specific action based on their plan
  */
 export function canPerformAction(
-  plan: PlanType | null,
+  plan: PlanType,
   action: keyof PlanLimits['features']
 ): boolean {
-  if (!plan) return false
   return PLAN_LIMITS[plan].features[action]
 }
 
@@ -142,11 +175,12 @@ export function canPerformAction(
  * Check if a user is within their usage limits
  */
 export function isWithinLimits(
-  plan: PlanType | null,
+  plan: PlanType,
   usage: {
     users?: number
     projects?: number
     apiCalls?: number
+    generations?: number
   }
 ): {
   isWithin: boolean
@@ -181,6 +215,16 @@ export function isWithinLimits(
     )
   }
 
+  if (
+    usage.generations &&
+    limits.maxGenerations > 0 &&
+    usage.generations > limits.maxGenerations
+  ) {
+    violations.push(
+      `Generations (${usage.generations}) exceed limit (${limits.maxGenerations})`
+    )
+  }
+
   return {
     isWithin: violations.length === 0,
     violations,
@@ -191,16 +235,18 @@ export function isWithinLimits(
  * Get remaining usage for a user's plan
  */
 export function getRemainingUsage(
-  plan: PlanType | null,
+  plan: PlanType,
   usage: {
     users?: number
     projects?: number
     apiCalls?: number
+    generations?: number
   }
 ): {
   users: number | 'unlimited'
   projects: number | 'unlimited'
   apiCalls: number | 'unlimited'
+  generations: number | 'unlimited'
 } {
   const limits = getPlanLimits(plan)
 
@@ -217,26 +263,16 @@ export function getRemainingUsage(
       limits.maxApiCalls === -1
         ? 'unlimited'
         : Math.max(0, limits.maxApiCalls - (usage.apiCalls || 0)),
+    generations:
+      limits.maxGenerations === -1
+        ? 'unlimited'
+        : Math.max(0, limits.maxGenerations - (usage.generations || 0)),
   }
 }
 
 /**
  * Get plan limits for a specific plan
  */
-export function getPlanLimits(plan: PlanType | null): PlanLimits {
-  if (!plan) {
-    // Default limits for users without subscription
-    return {
-      maxUsers: 1,
-      maxProjects: 1,
-      maxApiCalls: 100,
-      features: {
-        prioritySupport: false,
-        advancedAnalytics: false,
-        teamCollaboration: false,
-        customIntegrations: false,
-      },
-    }
-  }
+export function getPlanLimits(plan: PlanType): PlanLimits {
   return PLAN_LIMITS[plan]
 }
