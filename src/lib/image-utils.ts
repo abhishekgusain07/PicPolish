@@ -30,6 +30,10 @@ export async function captureElementAsImage(
     scale = 2,
   } = options
 
+  // Store original styles and classes to restore later
+  const originalStyles = new Map<Element, string>()
+  const originalClasses = new Map<Element, string>()
+
   try {
     console.log('Capturing element:', element.id, element.className)
 
@@ -37,10 +41,63 @@ export async function captureElementAsImage(
       throw new ImageCaptureError('Element has no visible dimensions')
     }
 
+    // Shadow-related Tailwind classes to temporarily remove
+    const shadowClasses = [
+      'shadow',
+      'shadow-sm',
+      'shadow-md',
+      'shadow-lg',
+      'shadow-xl',
+      'shadow-2xl',
+      'shadow-inner',
+      'shadow-none',
+      'drop-shadow',
+      'drop-shadow-sm',
+      'drop-shadow-md',
+      'drop-shadow-lg',
+      'drop-shadow-xl',
+      'drop-shadow-2xl',
+      'drop-shadow-none',
+    ]
+
+    // Process the main element and all children
+    const allElements = [element, ...Array.from(element.querySelectorAll('*'))]
+
+    allElements.forEach((el) => {
+      const htmlEl = el as HTMLElement
+
+      // Store and remove inline box-shadow styles
+      const computedStyle = window.getComputedStyle(el)
+      if (computedStyle.boxShadow !== 'none') {
+        originalStyles.set(el, htmlEl.style.boxShadow)
+        htmlEl.style.setProperty('box-shadow', 'none', 'important')
+      }
+
+      // Store and temporarily remove shadow classes
+      const currentClasses = Array.from(el.classList)
+      const hasShadowClasses = currentClasses.some((cls) =>
+        shadowClasses.some((shadowCls) => cls.includes(shadowCls))
+      )
+
+      if (hasShadowClasses) {
+        originalClasses.set(el, el.className)
+        const filteredClasses = currentClasses.filter(
+          (cls) => !shadowClasses.some((shadowCls) => cls.includes(shadowCls))
+        )
+        el.className = filteredClasses.join(' ')
+      }
+    })
+
+    // Force a reflow to ensure styles are applied
+    element.offsetHeight
+
     const captureOptions = {
       scale,
       quality: format !== 'png' ? quality : undefined,
       backgroundColor: format === 'jpeg' ? backgroundColor : undefined,
+      style: {
+        overflow: 'hidden',
+      },
     }
 
     console.log('Using capture options:', captureOptions)
@@ -60,6 +117,19 @@ export async function captureElementAsImage(
         break
     }
 
+    // Restore original styles and classes
+    originalStyles.forEach((originalValue, el) => {
+      if (originalValue) {
+        ;(el as HTMLElement).style.boxShadow = originalValue
+      } else {
+        ;(el as HTMLElement).style.removeProperty('box-shadow')
+      }
+    })
+
+    originalClasses.forEach((originalClassName, el) => {
+      el.className = originalClassName
+    })
+
     console.log('Generated dataURL:', dataUrl.substring(0, 100) + '...')
 
     // Convert dataURL to blob
@@ -68,6 +138,19 @@ export async function captureElementAsImage(
 
     return blob
   } catch (error) {
+    // Ensure styles and classes are restored even on error
+    originalStyles.forEach((originalValue, el) => {
+      if (originalValue) {
+        ;(el as HTMLElement).style.boxShadow = originalValue
+      } else {
+        ;(el as HTMLElement).style.removeProperty('box-shadow')
+      }
+    })
+
+    originalClasses.forEach((originalClassName, el) => {
+      el.className = originalClassName
+    })
+
     console.error('Modern-screenshot capture error:', error)
     if (error instanceof ImageCaptureError) {
       throw error
