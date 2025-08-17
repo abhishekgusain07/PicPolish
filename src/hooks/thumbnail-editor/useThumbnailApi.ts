@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { toast } from 'sonner'
 import { PlatformConfig, ApiResponse } from '@/types/thumbnail'
+import { UsageService } from '@/lib/usage'
 
 interface UseThumbnailApiProps {
   config: PlatformConfig
@@ -9,6 +10,10 @@ interface UseThumbnailApiProps {
     isLoading?: boolean
     error?: boolean
     tweetData?: Record<string, unknown>
+    usage?: {
+      plan: string
+      remaining: number
+    }
   }) => void
 }
 
@@ -116,12 +121,32 @@ export function useThumbnailApi({
         })
 
         if (!response.ok) {
+          if (response.status === 403) {
+            const errorData = await response.json()
+            if (errorData.upgradeRequired) {
+              toast.error(
+                `You've reached your ${config.name} generation limit! Upgrade to continue.`
+              )
+              updateImageState({
+                isLoading: false,
+                error: true,
+                usage: {
+                  plan: errorData.plan,
+                  remaining: 0,
+                },
+              })
+              return
+            }
+          }
           throw new Error(`HTTP error! status: ${response.status}`)
         }
 
         const data: Record<string, unknown> = await response.json()
 
         let thumbnailUrl: string | null = null
+
+        // Extract usage info from response
+        const usage = (data as any).usage
 
         // Handle Twitter response format
         if (config.name === 'Twitter') {
@@ -133,6 +158,7 @@ export function useThumbnailApi({
             isLoading: false,
             error: false,
             tweetData: data, // Store tweet data for rendering
+            usage,
           })
           toast.success(`${config.name} data loaded successfully!`)
           return
@@ -156,6 +182,7 @@ export function useThumbnailApi({
           url: thumbnailUrl,
           isLoading: false,
           error: false,
+          usage,
         })
 
         toast.success(`${config.name} thumbnail loaded successfully!`)

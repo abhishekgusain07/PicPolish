@@ -6,6 +6,12 @@ import {
   type User,
   type Tweet,
 } from 'rettiwt-api'
+import { auth } from '@/lib/auth'
+import { UsageService } from '@/lib/usage'
+import { getUserPlan } from '@/lib/plans'
+import { db } from '@/db'
+import { eq, desc } from 'drizzle-orm'
+import { subscription } from '@/db/schema'
 
 // Polyfill for buffer.transfer if not available
 if (typeof Buffer !== 'undefined' && !Buffer.prototype.transfer) {
@@ -74,6 +80,44 @@ const rettiwt = new Rettiwt({ apiKey: process.env.RETTIWT_API_KEY })
 
 export async function POST(request: NextRequest) {
   try {
+    // Get user session
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    })
+
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Get user's subscription and plan
+    const userSubscription = await db
+      .select()
+      .from(subscription)
+      .where(eq(subscription.userId, session.user.id))
+      .orderBy(desc(subscription.createdAt))
+      .limit(1)
+      .then((rows) => rows[0] || null)
+
+    const userPlan = getUserPlan(userSubscription)
+
+    // Check if user can generate
+    const { canGenerate, remaining } = await UsageService.canUserGenerate(
+      session.user.id,
+      userPlan
+    )
+
+    if (!canGenerate) {
+      return NextResponse.json(
+        {
+          error: 'Generation limit exceeded',
+          plan: userPlan,
+          remaining: 0,
+          upgradeRequired: true,
+        },
+        { status: 403 }
+      )
+    }
+
     const body = await request.json()
     const { tweetId } = body
 
@@ -86,7 +130,23 @@ export async function POST(request: NextRequest) {
 
     const tweet = await getTweetDetails(tweetId)
     const sanitizedTweet = sanitizeTweetData(tweet)
-    return NextResponse.json(sanitizedTweet)
+
+    // Record the generation
+    await UsageService.recordGeneration(
+      session.user.id,
+      'twitter',
+      `tweetId:${tweetId}`
+    )
+
+    // Include usage info in response
+    const newRemaining = remaining - 1
+    return NextResponse.json({
+      ...sanitizedTweet,
+      usage: {
+        plan: userPlan,
+        remaining: userPlan === 'free' ? newRemaining : -1,
+      },
+    })
   } catch (error) {
     console.error('Error processing tweet:', error)
     return NextResponse.json(
