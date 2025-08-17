@@ -105,6 +105,10 @@ export interface ImageState {
   isLoading: boolean
   error: boolean
   tweetData?: Record<string, unknown>
+  usage?: {
+    plan: string
+    remaining: number
+  }
 }
 
 export interface ExportSettings {
