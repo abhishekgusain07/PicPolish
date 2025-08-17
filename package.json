@@ -45,6 +45,7 @@
     "framer-motion": "^12.23.12",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.539.0",
+    "modern-screenshot": "^4.6.5",
     "motion": "^12.23.12",
     "nanoid": "^5.1.5",
     "next": "15.4.6",

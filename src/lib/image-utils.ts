@@ -1,3 +1,5 @@
+import { domToPng, domToJpeg, domToWebp } from 'modern-screenshot'
+
 export type ImageFormat = 'jpeg' | 'webp' | 'png'
 
 export interface CaptureOptions {
@@ -29,45 +31,44 @@ export async function captureElementAsImage(
   } = options
 
   try {
-    const rect = element.getBoundingClientRect()
+    console.log('Capturing element:', element.id, element.className)
 
-    if (rect.width === 0 || rect.height === 0) {
+    if (!element || element.offsetWidth === 0 || element.offsetHeight === 0) {
       throw new ImageCaptureError('Element has no visible dimensions')
     }
 
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-
-    if (!ctx) {
-      throw new ImageCaptureError('Failed to get canvas 2D context')
+    const captureOptions = {
+      scale,
+      quality: format !== 'png' ? quality : undefined,
+      backgroundColor: format === 'jpeg' ? backgroundColor : undefined,
     }
 
-    canvas.width = rect.width * scale
-    canvas.height = rect.height * scale
+    console.log('Using capture options:', captureOptions)
 
-    ctx.scale(scale, scale)
+    let dataUrl: string
 
-    if (format === 'jpeg') {
-      ctx.fillStyle = backgroundColor
-      ctx.fillRect(0, 0, rect.width, rect.height)
+    switch (format) {
+      case 'jpeg':
+        dataUrl = await domToJpeg(element, captureOptions)
+        break
+      case 'webp':
+        dataUrl = await domToWebp(element, captureOptions)
+        break
+      case 'png':
+      default:
+        dataUrl = await domToPng(element, captureOptions)
+        break
     }
 
-    await drawElementToCanvas(ctx, element, rect)
+    console.log('Generated dataURL:', dataUrl.substring(0, 100) + '...')
 
-    return new Promise((resolve, reject) => {
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            resolve(blob)
-          } else {
-            reject(new ImageCaptureError('Failed to create blob from canvas'))
-          }
-        },
-        `image/${format}`,
-        format !== 'png' ? quality : undefined
-      )
-    })
+    // Convert dataURL to blob
+    const blob = dataUrlToBlob(dataUrl)
+    console.log('Created blob:', blob.size, 'bytes')
+
+    return blob
   } catch (error) {
+    console.error('Modern-screenshot capture error:', error)
     if (error instanceof ImageCaptureError) {
       throw error
     }
@@ -78,120 +79,38 @@ export async function captureElementAsImage(
   }
 }
 
-async function drawElementToCanvas(
-  ctx: CanvasRenderingContext2D,
-  element: HTMLElement,
-  rect: DOMRect
-): Promise<void> {
-  const computedStyle = window.getComputedStyle(element)
+function dataUrlToBlob(dataUrl: string): Blob {
+  const arr = dataUrl.split(',')
+  const mimeMatch = arr[0].match(/:(.*?);/)
+  const mime = mimeMatch ? mimeMatch[1] : 'image/png'
+  const bstr = atob(arr[1])
+  let n = bstr.length
+  const u8arr = new Uint8Array(n)
 
-  ctx.fillStyle = computedStyle.backgroundColor || 'transparent'
-  ctx.fillRect(0, 0, rect.width, rect.height)
-
-  const borderRadius = computedStyle.borderRadius
-  if (borderRadius && borderRadius !== '0px') {
-    const radius = parseFloat(borderRadius)
-    drawRoundedRect(ctx, 0, 0, rect.width, rect.height, radius)
-    ctx.clip()
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
   }
 
-  await drawElementContent(ctx, element, rect)
-}
-
-function drawRoundedRect(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  radius: number
-): void {
-  ctx.beginPath()
-  ctx.moveTo(x + radius, y)
-  ctx.lineTo(x + width - radius, y)
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius)
-  ctx.lineTo(x + width, y + height - radius)
-  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height)
-  ctx.lineTo(x + radius, y + height)
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius)
-  ctx.lineTo(x, y + radius)
-  ctx.quadraticCurveTo(x, y, x + radius, y)
-  ctx.closePath()
-}
-
-async function drawElementContent(
-  ctx: CanvasRenderingContext2D,
-  element: HTMLElement,
-  rect: DOMRect
-): Promise<void> {
-  const images = element.querySelectorAll('img')
-  const imagePromises: Promise<void>[] = []
-
-  images.forEach((img) => {
-    if (img.complete && img.src) {
-      const imgRect = img.getBoundingClientRect()
-      const relativeX = imgRect.left - rect.left
-      const relativeY = imgRect.top - rect.top
-
-      try {
-        ctx.drawImage(img, relativeX, relativeY, imgRect.width, imgRect.height)
-      } catch (error) {
-        console.warn('Failed to draw image:', error)
-      }
-    }
-  })
-
-  const textNodes = getTextNodes(element)
-  textNodes.forEach((textNode) => {
-    const parentElement = textNode.parentElement
-    if (!parentElement) return
-
-    const range = document.createRange()
-    range.selectNode(textNode)
-    const textRect = range.getBoundingClientRect()
-
-    const relativeX = textRect.left - rect.left
-    const relativeY = textRect.top - rect.top
-
-    const computedStyle = window.getComputedStyle(parentElement)
-    ctx.font = `${computedStyle.fontWeight} ${computedStyle.fontSize} ${computedStyle.fontFamily}`
-    ctx.fillStyle = computedStyle.color
-    ctx.textAlign = 'left'
-    ctx.textBaseline = 'top'
-
-    const text = textNode.textContent || ''
-    ctx.fillText(text, relativeX, relativeY)
-  })
-
-  await Promise.all(imagePromises)
-}
-
-function getTextNodes(element: HTMLElement): Text[] {
-  const textNodes: Text[] = []
-  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, {
-    acceptNode: (node) => {
-      const text = node.textContent?.trim()
-      return text ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
-    },
-  })
-
-  let currentNode: Node | null
-  while ((currentNode = walker.nextNode())) {
-    textNodes.push(currentNode as Text)
-  }
-
-  return textNodes
+  return new Blob([u8arr], { type: mime })
 }
 
 export function downloadBlob(blob: Blob, filename: string): void {
+  console.log('Downloading blob:', blob.size, 'bytes as', filename)
+
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
   link.download = filename
+  link.style.display = 'none'
+
   document.body.appendChild(link)
   link.click()
-  document.body.removeChild(link)
-  URL.revokeObjectURL(url)
+
+  setTimeout(() => {
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+    console.log('Download completed and cleaned up')
+  }, 100)
 }
 
 export function convertImageFormat(

@@ -24,15 +24,28 @@ function ToolsFloatingControls() {
 
   const handleSaveImage = async (format: ImageFormat) => {
     try {
+      console.log('Starting image save process with format:', format)
+
+      // Try to find the capture element in order of preference
       const captureElement =
-        document.getElementById('ss') || document.getElementById('maindiv')
+        document.getElementById('thumbnail-container') || // Primary target - thumbnail preview
+        document.getElementById('ss') || // YouTube tool
+        document.getElementById('maindiv') || // Other tools
+        document.querySelector('[id*="thumbnail"]') || // Any element with thumbnail in ID
+        document.querySelector('.thumbnail') || // Any element with thumbnail class
+        document.querySelector('main') // Last resort
 
       if (!captureElement) {
         toast.error('Unable to find content to capture')
         return
       }
 
-      toast.loading('Capturing image...')
+      console.log(
+        'Found capture element:',
+        captureElement.id || captureElement.className
+      )
+
+      toast.loading('Capturing image...', { id: 'capture-toast' })
 
       const imageBlob = await captureElementAsImage(captureElement, {
         format,
@@ -44,17 +57,27 @@ function ToolsFloatingControls() {
       const filename = generateFileName('picpolish_export', format)
       downloadBlob(imageBlob, filename)
 
-      toast.success(`Image saved as ${filename}`)
+      toast.success(`Image saved as ${filename}`, { id: 'capture-toast' })
     } catch (error) {
       console.error('Image capture failed:', error)
-      toast.error('Failed to save image. Please try again.')
+      toast.error('Failed to save image. Please try again.', {
+        id: 'capture-toast',
+      })
     }
   }
 
   const handleCopyImage = async () => {
     try {
+      console.log('Starting image copy to clipboard')
+
+      // Use same element selection logic as save
       const captureElement =
-        document.getElementById('ss') || document.getElementById('maindiv')
+        document.getElementById('thumbnail-container') ||
+        document.getElementById('ss') ||
+        document.getElementById('maindiv') ||
+        document.querySelector('[id*="thumbnail"]') ||
+        document.querySelector('.thumbnail') ||
+        document.querySelector('main')
 
       if (!captureElement) {
         toast.error('Unable to find content to copy')
@@ -66,7 +89,12 @@ function ToolsFloatingControls() {
         return
       }
 
-      toast.loading('Copying image to clipboard...')
+      console.log(
+        'Copying element:',
+        captureElement.id || captureElement.className
+      )
+
+      toast.loading('Copying image to clipboard...', { id: 'copy-toast' })
 
       const imageBlob = await captureElementAsImage(captureElement, {
         format: 'png',
@@ -81,10 +109,12 @@ function ToolsFloatingControls() {
         }),
       ])
 
-      toast.success('Image copied to clipboard!')
+      toast.success('Image copied to clipboard!', { id: 'copy-toast' })
     } catch (error) {
       console.error('Copy to clipboard failed:', error)
-      toast.error('Failed to copy image. Please try again.')
+      toast.error('Failed to copy image. Please try again.', {
+        id: 'copy-toast',
+      })
     }
   }
 
