@@ -27,8 +27,9 @@ function ToolsFloatingControls() {
       console.log('Starting image save process with format:', format)
 
       // Try to find the capture element in order of preference
+      // Capture the full thumbnail container WITH backgrounds
       const captureElement =
-        document.getElementById('thumbnail-container') || // Primary target - thumbnail preview
+        document.getElementById('thumbnail-container') || // Primary target - full thumbnail with background
         document.getElementById('ss') || // YouTube tool
         document.getElementById('maindiv') || // Other tools
         document.querySelector('[id*="thumbnail"]') || // Any element with thumbnail in ID
@@ -42,7 +43,10 @@ function ToolsFloatingControls() {
 
       console.log(
         'Found capture element:',
-        captureElement.id || captureElement.className
+        (captureElement as HTMLElement).id ||
+          (captureElement as HTMLElement).className,
+        'Tag:',
+        captureElement.tagName
       )
 
       toast.loading('Capturing image...', { id: 'capture-toast' })
@@ -72,7 +76,7 @@ function ToolsFloatingControls() {
 
       // Use same element selection logic as save
       const captureElement =
-        document.getElementById('thumbnail-container') ||
+        document.getElementById('thumbnail-container') || // Primary target - full thumbnail with background
         document.getElementById('ss') ||
         document.getElementById('maindiv') ||
         document.querySelector('[id*="thumbnail"]') ||
@@ -91,7 +95,10 @@ function ToolsFloatingControls() {
 
       console.log(
         'Copying element:',
-        captureElement.id || captureElement.className
+        (captureElement as HTMLElement).id ||
+          (captureElement as HTMLElement).className,
+        'Tag:',
+        captureElement.tagName
       )
 
       toast.loading('Copying image to clipboard...', { id: 'copy-toast' })

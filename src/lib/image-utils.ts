@@ -33,6 +33,7 @@ export async function captureElementAsImage(
   // Store original styles and classes to restore later
   const originalStyles = new Map<Element, string>()
   const originalClasses = new Map<Element, string>()
+  let hadCaptureClass = false
 
   try {
     console.log('Capturing element:', element.id, element.className)
@@ -60,9 +61,33 @@ export async function captureElementAsImage(
       'drop-shadow-none',
     ]
 
-    // Process the main element and all children
+    // Add CSS-based shadow removal style to document head (SELECTIVE - preserve gradients!)
+    const captureStyleId = 'capture-mode-no-shadows'
+    const existingStyle = document.getElementById(captureStyleId)
+
+    if (!existingStyle) {
+      const style = document.createElement('style')
+      style.id = captureStyleId
+      style.textContent = `
+        .capture-mode-active,
+        .capture-mode-active * {
+          box-shadow: none !important;
+          text-shadow: none !important;
+        }
+        /* Preserve gradients and filters - only remove decorative shadows */
+      `
+      document.head.appendChild(style)
+    }
+
+    // Apply capture mode class to the element and document body
+    hadCaptureClass = element.classList.contains('capture-mode-active')
+    element.classList.add('capture-mode-active')
+    document.body.classList.add('capture-mode-active')
+
+    // Collect all elements to process: target element, children, and parent containers
     const allElements = [element, ...Array.from(element.querySelectorAll('*'))]
 
+    // Process target element and children for all shadow removal
     allElements.forEach((el) => {
       const htmlEl = el as HTMLElement
 
@@ -88,7 +113,44 @@ export async function captureElementAsImage(
       }
     })
 
+    // Also process parent containers (up to 2 levels) ONLY for Card shadows
+    const parentElements: Element[] = []
+    let currentParent = element.parentElement
+    let parentLevel = 0
+    while (currentParent && parentLevel < 2) {
+      // Only target Card containers that have shadow classes
+      const hasCardShadows = Array.from(currentParent.classList).some((cls) =>
+        ['shadow-xl', 'shadow-2xl', 'shadow-lg'].some((shadowCls) =>
+          cls.includes(shadowCls)
+        )
+      )
+
+      if (hasCardShadows) {
+        parentElements.push(currentParent)
+      }
+
+      currentParent = currentParent.parentElement
+      parentLevel++
+    }
+
+    // Remove shadows from parent Card containers only
+    parentElements.forEach((el) => {
+      const currentClasses = Array.from(el.classList)
+      const hasShadowClasses = currentClasses.some((cls) =>
+        shadowClasses.some((shadowCls) => cls.includes(shadowCls))
+      )
+
+      if (hasShadowClasses) {
+        originalClasses.set(el, el.className)
+        const filteredClasses = currentClasses.filter(
+          (cls) => !shadowClasses.some((shadowCls) => cls.includes(shadowCls))
+        )
+        el.className = filteredClasses.join(' ')
+      }
+    })
+
     // Force a reflow to ensure styles are applied
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     element.offsetHeight
 
     const captureOptions = {
@@ -130,6 +192,12 @@ export async function captureElementAsImage(
       el.className = originalClassName
     })
 
+    // Remove capture mode classes
+    if (!hadCaptureClass) {
+      element.classList.remove('capture-mode-active')
+    }
+    document.body.classList.remove('capture-mode-active')
+
     console.log('Generated dataURL:', dataUrl.substring(0, 100) + '...')
 
     // Convert dataURL to blob
@@ -150,6 +218,12 @@ export async function captureElementAsImage(
     originalClasses.forEach((originalClassName, el) => {
       el.className = originalClassName
     })
+
+    // Remove capture mode classes even on error
+    if (!hadCaptureClass) {
+      element.classList.remove('capture-mode-active')
+    }
+    document.body.classList.remove('capture-mode-active')
 
     console.error('Modern-screenshot capture error:', error)
     if (error instanceof ImageCaptureError) {
