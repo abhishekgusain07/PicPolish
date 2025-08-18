@@ -2,6 +2,7 @@
 import { motion } from 'motion/react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { PolaroidState, PolaroidConfig } from '@/types/thumbnail'
+import { PolaroidCanvas } from './PolaroidCanvas'
 
 interface PolaroidEditorProps {
   state: PolaroidState
@@ -57,11 +58,13 @@ export function PolaroidEditor({
         {/* Preview Area */}
         <div className="flex items-center justify-center">
           <div className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl p-8">
-            <div className="aspect-square w-80 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center">
-              <span className="text-slate-500 dark:text-slate-400">
-                Polaroid Preview
-              </span>
-            </div>
+            <PolaroidCanvas
+              state={state}
+              config={config}
+              width={350}
+              height={350}
+              scale={1}
+            />
           </div>
         </div>
 
@@ -177,6 +180,34 @@ export function PolaroidEditor({
                         {element === 'none' && 'None'}
                       </button>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {state.style === 'vintage' && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Aging Effect ({state.customizations.agingEffect}%)
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={state.customizations.agingEffect}
+                    onChange={(e) =>
+                      setState((prev) => ({
+                        ...prev,
+                        customizations: {
+                          ...prev.customizations,
+                          agingEffect: parseInt(e.target.value),
+                        },
+                      }))
+                    }
+                    className="w-full h-2 bg-slate-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer slider"
+                  />
+                  <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    <span>Clean</span>
+                    <span>Aged</span>
                   </div>
                 </div>
               )}

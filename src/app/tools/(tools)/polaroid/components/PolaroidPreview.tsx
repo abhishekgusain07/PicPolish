@@ -2,6 +2,7 @@
 import { motion } from 'motion/react'
 import { ArrowLeft, RotateCcw } from 'lucide-react'
 import { PolaroidState, PolaroidConfig } from '@/types/thumbnail'
+import { PolaroidCanvas } from './PolaroidCanvas'
 
 interface PolaroidPreviewProps {
   state: PolaroidState
@@ -57,35 +58,15 @@ export function PolaroidPreview({
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2 }}
           id="thumbnail-container"
-          className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-2xl p-8"
+          className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-2xl p-8"
         >
-          <div className="aspect-square w-96 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-6xl mb-4">
-                {state.style === 'classic' && '📸'}
-                {state.style === 'vintage' && '✍️'}
-                {state.style === 'filmstrip' && '🎞️'}
-              </div>
-              <span className="text-slate-500 dark:text-slate-400 text-lg">
-                {config.styles[state.style].name} Preview
-              </span>
-              <div className="mt-2 text-sm text-slate-400 dark:text-slate-500">
-                {state.images.length} image
-                {state.images.length !== 1 ? 's' : ''}
-              </div>
-            </div>
-          </div>
-
-          {config.styles[state.style].hasTextArea && (
-            <div className="mt-4 text-center">
-              <p className="text-sm text-slate-600 dark:text-slate-400 italic">
-                {state.textOverlay.text}
-              </p>
-              <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
-                {state.textOverlay.date}
-              </p>
-            </div>
-          )}
+          <PolaroidCanvas
+            state={state}
+            config={config}
+            width={450}
+            height={450}
+            scale={2}
+          />
         </motion.div>
       </div>
 
