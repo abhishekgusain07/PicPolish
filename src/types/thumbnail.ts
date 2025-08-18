@@ -519,3 +519,121 @@ export const DEFAULT_LOCAL_CONFIG: LocalImageConfig = {
   maxFileSize: 10 * 1024 * 1024, // 10MB
   allowMultiple: false,
 }
+
+// Polaroid Tool Types
+export type PolaroidStyle = 'classic' | 'vintage' | 'filmstrip'
+export type PolaroidMode = 'upload' | 'style' | 'customize' | 'preview'
+
+export interface TextOverlay {
+  text: string
+  date: string
+  font: string
+  color: string
+  size: number
+  position: { x: number; y: number }
+  rotation: number
+}
+
+export interface PolaroidImage {
+  id: string
+  file: File
+  url: string
+  blob: Blob
+  name: string
+}
+
+export interface PolaroidState {
+  mode: PolaroidMode
+  style: PolaroidStyle
+  images: PolaroidImage[]
+  currentImageIndex: number
+  textOverlay: TextOverlay
+  customizations: {
+    frameColor: string
+    decorativeElement: string
+    borderWidth: number
+    agingEffect: number
+  }
+}
+
+export interface PolaroidToolProps {
+  className?: string
+}
+
+export interface PolaroidConfig {
+  maxImages: number
+  supportedTypes: string[]
+  maxFileSize: number
+  styles: {
+    [key in PolaroidStyle]: {
+      name: string
+      description: string
+      aspectRatio: number
+      frameWidth: number
+      hasTextArea: boolean
+      allowMultipleImages: boolean
+    }
+  }
+}
+
+export const DEFAULT_TEXT_OVERLAY: TextOverlay = {
+  text: 'Sometimes, the smallest things take up the most room in my heart.',
+  date: new Date()
+    .toLocaleDateString('en-US', {
+      month: '2-digit',
+      day: '2-digit',
+      year: 'numeric',
+    })
+    .replace(/\//g, '.'),
+  font: 'handwritten',
+  color: '#2d3748',
+  size: 14,
+  position: { x: 50, y: 85 },
+  rotation: -1,
+}
+
+export const DEFAULT_POLAROID_STATE: PolaroidState = {
+  mode: 'upload',
+  style: 'classic',
+  images: [],
+  currentImageIndex: 0,
+  textOverlay: DEFAULT_TEXT_OVERLAY,
+  customizations: {
+    frameColor: '#ffffff',
+    decorativeElement: 'heart',
+    borderWidth: 40,
+    agingEffect: 0,
+  },
+}
+
+export const DEFAULT_POLAROID_CONFIG: PolaroidConfig = {
+  maxImages: 10,
+  supportedTypes: ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'],
+  maxFileSize: 10 * 1024 * 1024, // 10MB
+  styles: {
+    classic: {
+      name: 'Classic Polaroid',
+      description: 'Clean white border with decorative elements',
+      aspectRatio: 1,
+      frameWidth: 40,
+      hasTextArea: false,
+      allowMultipleImages: false,
+    },
+    vintage: {
+      name: 'Vintage Polaroid',
+      description: 'Aged look with handwritten text area',
+      aspectRatio: 1,
+      frameWidth: 40,
+      hasTextArea: true,
+      allowMultipleImages: false,
+    },
+    filmstrip: {
+      name: 'Film Strip',
+      description: 'Multiple photos in vertical film arrangement',
+      aspectRatio: 0.75,
+      frameWidth: 20,
+      hasTextArea: false,
+      allowMultipleImages: true,
+    },
+  },
+}

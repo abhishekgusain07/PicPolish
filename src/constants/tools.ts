@@ -84,6 +84,18 @@ export const tools: Tool[] = [
     ],
   },
   {
+    id: 'polaroid-tool',
+    name: 'Polaroid Images',
+    description:
+      'Transform your photos into beautiful polaroid-style images with custom frames and text.',
+    href: '/tools/polaroid',
+    category: 'image',
+    icon: '📸',
+    gradient: 'from-amber-500 to-orange-500',
+    features: ['Multiple styles', 'Custom text', 'Multi-image support'],
+    isPopular: true,
+  },
+  {
     id: 'gradient-collection',
     name: 'Gradient Collection',
     description:
