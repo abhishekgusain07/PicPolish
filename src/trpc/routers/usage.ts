@@ -58,7 +58,7 @@ export const usageRouter = createTRPCRouter({
   canGenerate: protectedProcedure
     .input(
       z.object({
-        platform: z.enum(['screenshot', 'twitter', 'youtube']),
+        platform: z.enum(['screenshot', 'twitter', 'youtube', 'polaroid']),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -99,7 +99,7 @@ export const usageRouter = createTRPCRouter({
   recordGeneration: protectedProcedure
     .input(
       z.object({
-        platform: z.enum(['screenshot', 'twitter', 'youtube']),
+        platform: z.enum(['screenshot', 'twitter', 'youtube', 'polaroid']),
         metadata: z.string().optional(),
       })
     )

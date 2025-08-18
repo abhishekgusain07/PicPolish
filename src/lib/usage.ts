@@ -3,7 +3,7 @@ import { generation } from '@/db/schema'
 import { eq, count } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 
-export type Platform = 'screenshot' | 'twitter' | 'youtube'
+export type Platform = 'screenshot' | 'twitter' | 'youtube' | 'polaroid'
 
 export interface GenerationRecord {
   id: string
@@ -59,6 +59,7 @@ export class UsageService {
       screenshot: 0,
       twitter: 0,
       youtube: 0,
+      polaroid: 0,
     }
 
     results.forEach((result) => {
