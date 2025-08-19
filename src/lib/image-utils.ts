@@ -87,19 +87,22 @@ export async function captureElementAsImage(
     )
     element.classList.add('capture-mode-no-container-shadow')
 
-    // Helper function to check if an element has user-applied shadows (inline styles)
-    const hasUserAppliedShadow = (el: Element): boolean => {
+    // Store and remove ALL inline boxShadow styles during capture
+    const storeAndRemoveBoxShadow = (el: Element) => {
       const htmlEl = el as HTMLElement
-      return !!(htmlEl.style.boxShadow && htmlEl.style.boxShadow !== 'none')
+      if (htmlEl.style.boxShadow && htmlEl.style.boxShadow !== 'none') {
+        originalStyles.set(el, htmlEl.style.boxShadow)
+        htmlEl.style.boxShadow = 'none'
+      }
     }
 
-    // Process only container-level shadow classes, preserve user shadows
+    // Process container-level shadow classes
     const currentClasses = Array.from(element.classList)
     const hasContainerShadowClasses = currentClasses.some((cls) =>
       containerShadowClasses.some((shadowCls) => cls.includes(shadowCls))
     )
 
-    if (hasContainerShadowClasses && !hasUserAppliedShadow(element)) {
+    if (hasContainerShadowClasses) {
       originalClasses.set(element, element.className)
       const filteredClasses = currentClasses.filter(
         (cls) =>
@@ -108,17 +111,19 @@ export async function captureElementAsImage(
       element.className = filteredClasses.join(' ')
     }
 
-    // Process child elements for container shadows but preserve user shadows
+    // Remove inline boxShadow from main element
+    storeAndRemoveBoxShadow(element)
+
+    // Process child elements - remove both shadow classes and inline boxShadow
     const childElements = Array.from(element.querySelectorAll('*'))
     childElements.forEach((el) => {
-      // Only remove container-level shadow classes, not user-applied shadows
+      // Remove container shadow classes
       const currentClasses = Array.from(el.classList)
       const hasContainerShadowClasses = currentClasses.some((cls) =>
         containerShadowClasses.some((shadowCls) => cls.includes(shadowCls))
       )
 
-      // Only remove shadows if they are container shadows (class-based) and not user shadows (inline)
-      if (hasContainerShadowClasses && !hasUserAppliedShadow(el)) {
+      if (hasContainerShadowClasses) {
         originalClasses.set(el, el.className)
         const filteredClasses = currentClasses.filter(
           (cls) =>
@@ -126,9 +131,12 @@ export async function captureElementAsImage(
         )
         el.className = filteredClasses.join(' ')
       }
+
+      // Remove inline boxShadow styles
+      storeAndRemoveBoxShadow(el)
     })
 
-    // Process parent Card containers for decorative shadows only
+    // Process parent Card containers for shadows
     const parentElements: Element[] = []
     let currentParent = element.parentElement
     let parentLevel = 0
@@ -139,7 +147,7 @@ export async function captureElementAsImage(
         )
       )
 
-      if (hasCardShadows && !hasUserAppliedShadow(currentParent)) {
+      if (hasCardShadows) {
         parentElements.push(currentParent)
       }
 
@@ -147,7 +155,7 @@ export async function captureElementAsImage(
       parentLevel++
     }
 
-    // Remove decorative shadows from parent containers
+    // Remove shadows from parent containers
     parentElements.forEach((el) => {
       const currentClasses = Array.from(el.classList)
       const hasContainerShadowClasses = currentClasses.some((cls) =>
@@ -162,6 +170,9 @@ export async function captureElementAsImage(
         )
         el.className = filteredClasses.join(' ')
       }
+
+      // Also remove inline boxShadow from parent elements
+      storeAndRemoveBoxShadow(el)
     })
 
     // Force a reflow to ensure styles are applied
