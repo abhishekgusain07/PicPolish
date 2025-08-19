@@ -53,5 +53,6 @@ export const config = {
     '/dashboard/:path*',
     '/app/:path*',
     '/billing',
+    '/tools/:path*',
   ],
 }
