@@ -58,7 +58,7 @@ export function PolaroidPreview({
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2 }}
           id="thumbnail-container"
-          className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-2xl p-8"
+          className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-2xl p-8 capture-mode-no-container-shadow"
         >
           <PolaroidCanvas
             state={state}

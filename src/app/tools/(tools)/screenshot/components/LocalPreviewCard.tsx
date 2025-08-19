@@ -100,7 +100,7 @@ function LocalThumbnailPreview({
     <div className="flex flex-col items-center justify-center p-6 w-full h-full min-h-[600px]">
       <div
         id="thumbnail-container"
-        className="rounded-2xl shadow-2xl transition-all duration-500 ease-in-out"
+        className="rounded-2xl shadow-2xl transition-all duration-500 ease-in-out capture-mode-no-container-shadow"
         style={{
           padding: getPaddingStyle(),
           margin: '0px',

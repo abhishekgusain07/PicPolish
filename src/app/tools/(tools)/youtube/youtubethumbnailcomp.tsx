@@ -276,7 +276,7 @@ const ThumbnailComponent = ({
     <div className="flex flex-col items-center justify-center p-6 w-full h-full min-h-[600px]">
       <div
         id="ss"
-        className="rounded-2xl shadow-2xl max-w-[95%] sm:max-w-[85%] md:max-w-[75%] lg:max-w-[65%] transition-all duration-300"
+        className="rounded-2xl shadow-2xl max-w-[95%] sm:max-w-[85%] md:max-w-[75%] lg:max-w-[65%] transition-all duration-300 capture-mode-no-container-shadow"
         style={{
           padding: (() => {
             const value = paddingValue

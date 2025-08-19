@@ -42,8 +42,8 @@ export async function captureElementAsImage(
       throw new ImageCaptureError('Element has no visible dimensions')
     }
 
-    // Shadow-related Tailwind classes to temporarily remove
-    const shadowClasses = [
+    // Container shadow classes to remove (decorative UI shadows)
+    const containerShadowClasses = [
       'shadow',
       'shadow-sm',
       'shadow-md',
@@ -61,71 +61,85 @@ export async function captureElementAsImage(
       'drop-shadow-none',
     ]
 
-    // Add CSS-based shadow removal style to document head (SELECTIVE - preserve gradients!)
-    const captureStyleId = 'capture-mode-no-shadows'
+    // Add CSS-based shadow removal style for CONTAINER shadows only
+    const captureStyleId = 'capture-mode-no-container-shadows'
     const existingStyle = document.getElementById(captureStyleId)
 
     if (!existingStyle) {
       const style = document.createElement('style')
       style.id = captureStyleId
       style.textContent = `
-        .capture-mode-active,
-        .capture-mode-active * {
+        /* Remove container shadows but preserve user-applied shadows */
+        .capture-mode-no-container-shadow {
           box-shadow: none !important;
-          text-shadow: none !important;
         }
-        /* Preserve gradients and filters - only remove decorative shadows */
+        /* Preserve user-applied inline shadows and text shadows */
+        .capture-mode-preserve-user-shadow {
+          /* This class preserves existing inline box-shadow styles */
+        }
       `
       document.head.appendChild(style)
     }
 
-    // Apply capture mode class to the element and document body
-    hadCaptureClass = element.classList.contains('capture-mode-active')
-    element.classList.add('capture-mode-active')
-    document.body.classList.add('capture-mode-active')
+    // Apply capture mode class to the main container element only
+    hadCaptureClass = element.classList.contains(
+      'capture-mode-no-container-shadow'
+    )
+    element.classList.add('capture-mode-no-container-shadow')
 
-    // Collect all elements to process: target element, children, and parent containers
-    const allElements = [element, ...Array.from(element.querySelectorAll('*'))]
-
-    // Process target element and children for all shadow removal
-    allElements.forEach((el) => {
+    // Helper function to check if an element has user-applied shadows (inline styles)
+    const hasUserAppliedShadow = (el: Element): boolean => {
       const htmlEl = el as HTMLElement
+      return !!(htmlEl.style.boxShadow && htmlEl.style.boxShadow !== 'none')
+    }
 
-      // Store and remove inline box-shadow styles
-      const computedStyle = window.getComputedStyle(el)
-      if (computedStyle.boxShadow !== 'none') {
-        originalStyles.set(el, htmlEl.style.boxShadow)
-        htmlEl.style.setProperty('box-shadow', 'none', 'important')
-      }
+    // Process only container-level shadow classes, preserve user shadows
+    const currentClasses = Array.from(element.classList)
+    const hasContainerShadowClasses = currentClasses.some((cls) =>
+      containerShadowClasses.some((shadowCls) => cls.includes(shadowCls))
+    )
 
-      // Store and temporarily remove shadow classes
+    if (hasContainerShadowClasses && !hasUserAppliedShadow(element)) {
+      originalClasses.set(element, element.className)
+      const filteredClasses = currentClasses.filter(
+        (cls) =>
+          !containerShadowClasses.some((shadowCls) => cls.includes(shadowCls))
+      )
+      element.className = filteredClasses.join(' ')
+    }
+
+    // Process child elements for container shadows but preserve user shadows
+    const childElements = Array.from(element.querySelectorAll('*'))
+    childElements.forEach((el) => {
+      // Only remove container-level shadow classes, not user-applied shadows
       const currentClasses = Array.from(el.classList)
-      const hasShadowClasses = currentClasses.some((cls) =>
-        shadowClasses.some((shadowCls) => cls.includes(shadowCls))
+      const hasContainerShadowClasses = currentClasses.some((cls) =>
+        containerShadowClasses.some((shadowCls) => cls.includes(shadowCls))
       )
 
-      if (hasShadowClasses) {
+      // Only remove shadows if they are container shadows (class-based) and not user shadows (inline)
+      if (hasContainerShadowClasses && !hasUserAppliedShadow(el)) {
         originalClasses.set(el, el.className)
         const filteredClasses = currentClasses.filter(
-          (cls) => !shadowClasses.some((shadowCls) => cls.includes(shadowCls))
+          (cls) =>
+            !containerShadowClasses.some((shadowCls) => cls.includes(shadowCls))
         )
         el.className = filteredClasses.join(' ')
       }
     })
 
-    // Also process parent containers (up to 2 levels) ONLY for Card shadows
+    // Process parent Card containers for decorative shadows only
     const parentElements: Element[] = []
     let currentParent = element.parentElement
     let parentLevel = 0
     while (currentParent && parentLevel < 2) {
-      // Only target Card containers that have shadow classes
       const hasCardShadows = Array.from(currentParent.classList).some((cls) =>
         ['shadow-xl', 'shadow-2xl', 'shadow-lg'].some((shadowCls) =>
           cls.includes(shadowCls)
         )
       )
 
-      if (hasCardShadows) {
+      if (hasCardShadows && !hasUserAppliedShadow(currentParent)) {
         parentElements.push(currentParent)
       }
 
@@ -133,17 +147,18 @@ export async function captureElementAsImage(
       parentLevel++
     }
 
-    // Remove shadows from parent Card containers only
+    // Remove decorative shadows from parent containers
     parentElements.forEach((el) => {
       const currentClasses = Array.from(el.classList)
-      const hasShadowClasses = currentClasses.some((cls) =>
-        shadowClasses.some((shadowCls) => cls.includes(shadowCls))
+      const hasContainerShadowClasses = currentClasses.some((cls) =>
+        containerShadowClasses.some((shadowCls) => cls.includes(shadowCls))
       )
 
-      if (hasShadowClasses) {
+      if (hasContainerShadowClasses) {
         originalClasses.set(el, el.className)
         const filteredClasses = currentClasses.filter(
-          (cls) => !shadowClasses.some((shadowCls) => cls.includes(shadowCls))
+          (cls) =>
+            !containerShadowClasses.some((shadowCls) => cls.includes(shadowCls))
         )
         el.className = filteredClasses.join(' ')
       }
@@ -194,9 +209,8 @@ export async function captureElementAsImage(
 
     // Remove capture mode classes
     if (!hadCaptureClass) {
-      element.classList.remove('capture-mode-active')
+      element.classList.remove('capture-mode-no-container-shadow')
     }
-    document.body.classList.remove('capture-mode-active')
 
     console.log('Generated dataURL:', dataUrl.substring(0, 100) + '...')
 
@@ -221,9 +235,8 @@ export async function captureElementAsImage(
 
     // Remove capture mode classes even on error
     if (!hadCaptureClass) {
-      element.classList.remove('capture-mode-active')
+      element.classList.remove('capture-mode-no-container-shadow')
     }
-    document.body.classList.remove('capture-mode-active')
 
     console.error('Modern-screenshot capture error:', error)
     if (error instanceof ImageCaptureError) {
