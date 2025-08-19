@@ -95,42 +95,42 @@ export const tools: Tool[] = [
     features: ['Multiple styles', 'Custom text', 'Multi-image support'],
     isPopular: true,
   },
-  {
-    id: 'gradient-collection',
-    name: 'Gradient Collection',
-    description:
-      'Access a curated collection of 32 beautiful gradients for your designs.',
-    href: '/tools/gradients',
-    category: 'design',
-    icon: '🌈',
-    gradient: 'from-orange-500 to-pink-500',
-    features: ['32 gradients', 'CSS ready', 'Professional quality'],
-    assetCount: 32,
-  },
-  {
-    id: 'color-palette',
-    name: 'Color Palette',
-    description:
-      'Professional color collection with 38 carefully selected colors.',
-    href: '/tools/colors',
-    category: 'design',
-    icon: '🎨',
-    gradient: 'from-green-500 to-teal-500',
-    features: ['38 colors', 'RGB values', 'Design ready'],
-    assetCount: 38,
-  },
-  {
-    id: 'transform-effects',
-    name: 'Transform Effects',
-    description:
-      'Creative CSS transforms and 3D effects for modern web design.',
-    href: '/tools/transforms',
-    category: 'design',
-    icon: '🔄',
-    gradient: 'from-indigo-500 to-purple-500',
-    features: ['3D effects', 'CSS transforms', 'Modern styling'],
-    assetCount: 13,
-  },
+  // {
+  //   id: 'gradient-collection',
+  //   name: 'Gradient Collection',
+  //   description:
+  //     'Access a curated collection of 32 beautiful gradients for your designs.',
+  //   href: '/tools/gradients',
+  //   category: 'design',
+  //   icon: '🌈',
+  //   gradient: 'from-orange-500 to-pink-500',
+  //   features: ['32 gradients', 'CSS ready', 'Professional quality'],
+  //   assetCount: 32,
+  // },
+  // {
+  //   id: 'color-palette',
+  //   name: 'Color Palette',
+  //   description:
+  //     'Professional color collection with 38 carefully selected colors.',
+  //   href: '/tools/colors',
+  //   category: 'design',
+  //   icon: '🎨',
+  //   gradient: 'from-green-500 to-teal-500',
+  //   features: ['38 colors', 'RGB values', 'Design ready'],
+  //   assetCount: 38,
+  // },
+  // {
+  //   id: 'transform-effects',
+  //   name: 'Transform Effects',
+  //   description:
+  //     'Creative CSS transforms and 3D effects for modern web design.',
+  //   href: '/tools/transforms',
+  //   category: 'design',
+  //   icon: '🔄',
+  //   gradient: 'from-indigo-500 to-purple-500',
+  //   features: ['3D effects', 'CSS transforms', 'Modern styling'],
+  //   assetCount: 13,
+  // },
 ]
 
 export const getToolsByCategory = (category?: string) => {

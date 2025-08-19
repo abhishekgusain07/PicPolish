@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { useState, useMemo, useEffect } from 'react'
 import DuolingoBadge from '@/components/ui/duolingo-badge'
-import DuolingoButton from '@/components/ui/duolingo-button'
 import { tools, getToolStats } from '@/constants/tools'
 import { cn } from '@/lib/utils'
 import { Search, Grid, List, FileText, ArrowRight } from 'lucide-react'
